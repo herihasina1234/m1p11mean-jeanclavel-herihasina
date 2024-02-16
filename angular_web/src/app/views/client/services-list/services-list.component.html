@@ -1,0 +1,28 @@
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+    <c-container>
+        <c-row class="justify-content-center">
+            <c-col md="12">
+                <c-card-group>
+                    <c-card class="m-1 w-10" *ngFor="let service of services">
+                        <img cCardImg="top" src="./assets/img/services/manicure.jpg">
+                        <c-card-body>
+                          <h5 cCardTitle>{{ service.designation }}</h5>
+                          <p cCardText>
+                            {{ service.description }}
+                          </p>
+                        </c-card-body>
+                        <!-- <ul cListGroup [flush]="true"> -->
+                        <ul cListGroup>
+                          <li cListGroupItem>Duree: {{ service.duree }} mn</li>
+                          <li cListGroupItem>Prix: {{ service.prix }} Ar</li>                  
+                        </ul>
+                        <c-card-body>
+                            <button cButton color="primary">Ajouter au rendez-vous</button>
+                        </c-card-body>
+                      </c-card>
+                </c-card-group>
+            </c-col>
+        </c-row>
+
+    </c-container>
+</div>

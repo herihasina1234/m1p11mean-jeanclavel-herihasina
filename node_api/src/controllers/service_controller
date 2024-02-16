@@ -1,0 +1,29 @@
+const Service = require('../models/service')
+
+module.exports.find = async (req, res) => {        
+    await Service.find()
+        .then ( services => {    
+            const response = {
+                message: "service list obtained successfully",
+                data: services                 
+            }            
+            res.status(201).json({ response: response });
+        })
+        .catch( error => {
+            return res.status(400).json({message: error.message, data: error})
+        })            
+            
+}
+
+module.exports.save = async (req, res) => {
+    let { designation, description, duree, prix, commission } = req.body;
+
+    await Service.create({ designation, description, duree, prix, commission })
+        .then ( service => {                   
+            const message = "service added successfully"                 
+            res.status(201).json({message: message, data: service});
+        })
+        .catch( error => {
+            return res.status(400).json({message: error.message, data: error})
+        })                        
+}

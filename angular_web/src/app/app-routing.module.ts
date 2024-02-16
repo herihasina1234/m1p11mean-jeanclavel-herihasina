@@ -7,8 +7,14 @@ import { Page500Component } from './views/pages/page500/page500.component';
 import { LoginComponent } from './views/pages/login/login.component';
 import { RegisterComponent } from './views/pages/register/register.component';
 import { authorizationGuard } from './guard/authorization.guard';
+import { ServicesListComponent } from './views/client/services-list/services-list.component';
 
 const routes: Routes = [  
+  {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  },  
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -66,6 +72,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./views/pages/pages.module').then((m) => m.PagesModule)
       },
+      {        
+        path: 'clients',
+        loadChildren: () =>
+        import('./views/client/client.module').then((m) => m.ClientModule)
+      }
     ]
   },
   {
@@ -97,8 +108,7 @@ const routes: Routes = [
       title: 'Register Page'
     }
   },
-  //{path: '**', redirectTo: 'dashboard'}  
-  {path: 'dashboard', redirectTo: 'dashboard'}  
+  {path: '**', redirectTo: 'dashboard'}    
 ];
 
 @NgModule({
