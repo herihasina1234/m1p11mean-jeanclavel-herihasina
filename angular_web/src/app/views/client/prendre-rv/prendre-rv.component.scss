@@ -1,0 +1,19 @@
+.cartCard {
+    padding: 20px;
+    border: 1px solid #eab308;
+    border-radius: 6px;
+  
+  
+    &__title {
+      margin-bottom: 40px;
+      text-align: center;
+      text-decoration: underline;
+    }
+  
+  
+    .total {
+      margin-top: 40px;
+      text-align: right;
+      color: #14b8a6;
+    }
+  }

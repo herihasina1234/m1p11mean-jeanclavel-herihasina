@@ -2,20 +2,23 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClientRoutingModule } from './client-routing.module';
 import { ServicesListComponent } from './services-list/services-list.component';
-import { ButtonModule, CardModule, GridModule } from '@coreui/angular';
+import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
+import { PrendreRvComponent } from 'src/app/views/client/prendre-rv/prendre-rv.component';
 
 
 
 @NgModule({
   declarations: [
-    ServicesListComponent
+    ServicesListComponent,
+    PrendreRvComponent
   ],
   imports: [
     CommonModule,
     ClientRoutingModule,
     GridModule,
     CardModule,
-    ButtonModule
+    ButtonModule,    
+    FormModule
   ]
 })
 export class ClientModule { }

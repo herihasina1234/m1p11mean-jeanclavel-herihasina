@@ -1,4 +1,5 @@
 export class Service {
+    id: string;
     designation: string;
     description: string;
     duree: Number;
@@ -6,6 +7,7 @@ export class Service {
     commission: Number;
   
     constructor() {
+      this.id = '';
       this.designation = '';
       this.description = '';
       this.duree = 0;
