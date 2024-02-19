@@ -34,19 +34,24 @@
         <h4 *ngIf="dateFin" class="total">fin: {{ dateFin }} </h4>
         <h4 *ngIf="prixTotal" class="total">Total: {{ prixTotal }} Ar</h4>
         
-        <form cForm>
-          <c-input-group class="mb-3">
-            <input autoComplete="date" cFormControl required="required"
-            aria-required="true" class="form-control"/>
-          </c-input-group>
-          <c-row >                  
-            <button cButton class="px-4" color="primary" (click)="validateRv()">
-              Valider le rendez-vous
-            </button>                  
-        </c-row>
-        </form>
       </ng-container>
     </ng-container>
+    <form cForm>
+      <mat-form-field >
+        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a date" >
+        <mat-datepicker-toggle matSuffix [for]="$any(picker)" ></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+           [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
+           [touchUi]="touchUi"  [enableMeridian]="enableMeridian" 
+           [disableMinute]="disableMinute" [hideTime]="hideTime">
+        </ngx-mat-datetime-picker>
+     </mat-form-field>
+      <c-row >                  
+        <button cButton class="px-4" color="primary" (click)="validateRv()">
+          Valider le rendez-vous
+        </button>                  
+    </c-row>
+    </form>
     
   
     <ng-template #emptyList>

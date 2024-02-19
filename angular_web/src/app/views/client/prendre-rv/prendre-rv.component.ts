@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 import { Observable, Subject, Timestamp, map, takeUntil } from 'rxjs';
 import { Service } from 'src/app/models/Service';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
@@ -15,6 +16,20 @@ export class PrendreRvComponent {
   dateDebut: number | undefined = undefined;
   dateFin: number | undefined = undefined;
   private destroyed$ = new Subject<void>();  
+
+  //datetimepicker params
+  hideTime: boolean = false;
+  disableMinute: boolean = false;
+  enableMeridian: boolean = false;
+  public color: ThemePalette = 'primary';
+  touchUi: boolean = true;
+  stepSecond: number = 10;
+  stepMinute: number = 1;
+  stepHour: number = 1;
+  showSeconds: boolean = false;
+  showSpinners: boolean = false;
+  
+
 
   constructor(private prendreRvService: PrendreRvService) {
     this.calculateTotal();
