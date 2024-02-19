@@ -14,13 +14,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let service of services">
+              <tr *ngFor="let service of services; let i = index">
                 <td>{{ service.designation }}</td>
                 <td>{{ service.duree }}</td>
                 <td>{{ service.prix }}</td>
                 <td>choisir employe</td>
                 <td>
-                  <button (click)="removeProductFromCart(1)" color="primary-dark">
+                  <button (click)="removeProductFromCart(i)" color="primary-dark">
                   Retirer du panier
                   </button>
                 </td>
@@ -29,29 +29,30 @@
           </table>
         </div>      
                               
-        <h4 *ngIf="dateDebut" class="total">debut: {{ dateDebut }} </h4>
-        <h4 *ngIf="dureeTotal" class="total">duree total: {{ dureeTotal }} mn</h4>
-        <h4 *ngIf="dateFin" class="total">fin: {{ dateFin }} </h4>
-        <h4 *ngIf="prixTotal" class="total">Total: {{ prixTotal }} Ar</h4>
         
       </ng-container>
-    </ng-container>
-    <form cForm>
-      <mat-form-field >
-        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a date" >
-        <mat-datepicker-toggle matSuffix [for]="$any(picker)" ></mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
-           [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
-           [touchUi]="touchUi"  [enableMeridian]="enableMeridian" 
-           [disableMinute]="disableMinute" [hideTime]="hideTime">
-        </ngx-mat-datetime-picker>
-     </mat-form-field>
-      <c-row >                  
-        <button cButton class="px-4" color="primary" (click)="validateRv()">
-          Valider le rendez-vous
-        </button>                  
-    </c-row>
-    </form>
+    </ng-container>        
+    
+    <h4 class="total">debut: {{ dateDebutStr }} </h4>
+    <h4 class="total">duree total: {{ dureeTotal }} mn</h4>
+    <h4 class="total">fin: {{ dateFinStr }} </h4>
+    <h4 class="total">Total: {{ prixTotal }} Ar</h4>
+    
+    <div *ngIf="dateTimeForm">
+      <form  [formGroup]="dateTimeForm" (ngSubmit)="onSubmit()">
+       <div class="form-group">
+         <label for="selectedDateTime">Choisir la date/heure:</label>
+         <input
+         id="requestdate" 
+         type="datetime-local" 
+         class="form-control" 
+         formControlName="requestdate" 
+         />
+       </div>
+       <button type="submit" class="btn btn-primary">Calculer</button>
+       <button  class="btn btn-primary" (click)="validateRv()">Valider le rendez-vous</button>
+     </form>
+    </div>
     
   
     <ng-template #emptyList>
