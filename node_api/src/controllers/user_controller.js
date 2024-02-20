@@ -40,14 +40,14 @@ module.exports.login = async (req, res) => {
 
 module.exports.save = async (req, res) => {
     const salt = await bcrypt.genSalt();    
-    let { email, password, name, firstname } = req.body;
+    let { email, password, name, firstname, fonction } = req.body;
     
     //encrypt password
     bcrypt.hash(password, salt)
     .then( async hash => {
         //save user
         password = hash
-        await User.create({ email, password, name, firstname })
+        await User.create({ email, password, name, firstname, fonction })
             .then ( user => {                   
                 const message = "user added successfully"                 
                 res.status(201).json({message: message, data: user});
@@ -64,6 +64,24 @@ module.exports.find = async (req, res) => {
         .then ( users => {    
             const response = {
                 message: "list obtained successfully",
+                data: users                 
+            }
+            res.status(201).json({ response: response });
+        })
+        .catch( error => {
+            return res.status(400).json({message: error.message, data: error})
+        })            
+            
+}
+
+module.exports.findByFonction = async (req, res) => {    
+    const fonction = req.params.fonction;
+    var condition = {fonction: fonction};
+
+    await User.find(condition)
+        .then ( users => {    
+            const response = {
+                message: `list of all ${fonction} user obtained successfully`,
                 data: users                 
             }
             res.status(201).json({ response: response });

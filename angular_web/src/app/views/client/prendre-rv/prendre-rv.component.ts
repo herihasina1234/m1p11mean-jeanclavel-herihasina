@@ -4,6 +4,8 @@ import { Observable, Subject, map, takeUntil } from 'rxjs';
 import { Service } from 'src/app/models/Service';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
 import { DateService } from 'src/app/services/date/date.service';
+import { User } from 'src/app/models/User';
+import { UserService } from 'src/app/services/api/user_service/user.service';
 
 @Component({
   selector: 'app-prendre-rv',
@@ -18,6 +20,7 @@ export class PrendreRvComponent implements OnInit{
   dateFin: Date = new Date();
   dateDebutStr: string = '';
   dateFinStr: string = '';
+  employes: User[] = [];
   private destroyed$ = new Subject<void>();    
 
   // Define FormGroup to manage the form
@@ -25,6 +28,7 @@ export class PrendreRvComponent implements OnInit{
 
   constructor(
     private prendreRvService: PrendreRvService,
+    private userService: UserService,
     private dateService: DateService,
     private formBuilder: FormBuilder
     ) {
@@ -35,9 +39,9 @@ export class PrendreRvComponent implements OnInit{
       requestdate: ['']
     })    
     this.dateTimeForm.get('requestdate')?.patchValue(this.dateService.formatDate(this.dateDebut));
-    //this.placeholderText = this.dateService.formatDate(this.dateDebut);
       
-    this.calculate();      
+    this.initEmployes();
+    this.calculate();  
   }
 
   private calculate(): void {
@@ -89,14 +93,34 @@ export class PrendreRvComponent implements OnInit{
     this.dateFinStr = this.dateService.formatToDisplay(this.dateFin)
   }
 
-  validateRv(): void {
-    alert("validateRv successfull");
+  //initialisation listes des employes
+  initEmployes(){
+   this.userService.get("employe")
+    .subscribe({
+      next: (response: any) =>  {
+        this.employes = response.response.data;
+        console.log(this.employes);
+        console.info(response.response.message);
+      }, 
+      error: (e: any) => console.error(e),
+      complete: () => console.info("initEmployes completed succesfully")
+    })  
   }
-  
+
+  // Méthode appelée lorsqu'une option est sélectionnée
+  onSelect(optionValue: Event) {    
+    const selected = ( optionValue?.target as HTMLSelectElement ).value
+    console.log(selected);
+  }
+
   onSubmit(): void {
     this.calculate();
   }
 
+  validateRv(): void {
+    alert("validateRv successfull");
+  }
+  
   removeProductFromCart = (id: number): void => {
     this.prendreRvService.removeFromCart(id);
   };

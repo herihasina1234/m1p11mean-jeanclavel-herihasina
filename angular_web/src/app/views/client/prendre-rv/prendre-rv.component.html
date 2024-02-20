@@ -18,7 +18,12 @@
                 <td>{{ service.designation }}</td>
                 <td>{{ service.duree }}</td>
                 <td>{{ service.prix }}</td>
-                <td>choisir employe</td>
+                <td>
+                  <select (change)="onSelect($event)">
+                    <option value="">Choisir un employe</option>
+                    <option *ngFor="let employe of employes" [value]="employe">{{ employe.name }}  {{ employe.firstname }}</option>
+                  </select>
+                </td>
                 <td>
                   <button (click)="removeProductFromCart(i)" color="primary-dark">
                   Retirer du panier

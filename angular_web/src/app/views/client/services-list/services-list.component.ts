@@ -24,14 +24,14 @@ export class ServicesListComponent implements OnInit {
 
   getAllServices(){
     this.serviceService.getAll()
-    .subscribe({
-      next: (response: any) =>  {
-        this.services = response.response.data;                     
-        console.info(response.response.message);
-      }, 
-      error: (e: any) => console.error(e),
-      complete: () => console.info("getAllServices completed succesfully")
-    })    
+      .subscribe({
+        next: (response: any) =>  {
+          this.services = response.response.data;                     
+          console.info(response.response.message);
+        }, 
+        error: (e: any) => console.error(e),
+        complete: () => console.info("getAllServices completed succesfully")
+      })    
   }
   
   addServiceToCart(service: Service){

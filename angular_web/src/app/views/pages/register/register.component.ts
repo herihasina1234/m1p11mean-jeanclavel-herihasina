@@ -46,7 +46,8 @@ export class RegisterComponent implements OnInit{
       name: this.user.name,
       firstname: this.user.firstname,
       email: this.user.email,
-      password: this.user.password
+      password: this.user.password,
+      fonction: "client"
     };
     
     this.userService.create(data)

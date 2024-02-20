@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     firstname: {
         type: String,
         length: [100, 'length max is 100 characters'],
+    },
+    fonction: {
+        type: String,
+        length: [100, 'length max is 100 characters'],
     }
 });
 
