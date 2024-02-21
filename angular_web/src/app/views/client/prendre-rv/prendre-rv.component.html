@@ -1,66 +1,62 @@
 <div class="cartCard">
-    <h1 class="cartCard__title">Details du rendez-vous</h1>
-    <ng-container *ngIf="cartServices$ | async as services">
-      <ng-container *ngIf="services.length > 0; else emptyList">
-        <div class="table-responsive">
-          <table class="table table-striped mlr-10">
-            <thead class="thead -primary">
-              <tr>
-                <th th scope="col">designation</th>
-                <th th scope="col">duree (en mn)</th>
-                <th th scope="col">prix (en Ar)</th>
-                <th th scope="col">employe</th>
-                <th th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let service of services; let i = index">
-                <td>{{ service.designation }}</td>
-                <td>{{ service.duree }}</td>
-                <td>{{ service.prix }}</td>
-                <td>
-                  <select (change)="onSelect($event)">
-                    <option value="">Choisir un employe</option>
-                    <option *ngFor="let employe of employes" [value]="employe">{{ employe.name }}  {{ employe.firstname }}</option>
-                  </select>
-                </td>
-                <td>
-                  <button (click)="removeProductFromCart(i)" color="primary-dark">
-                  Retirer du panier
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>      
-                              
-        
-      </ng-container>
-    </ng-container>        
-    
-    <h4 class="total">debut: {{ dateDebutStr }} </h4>
-    <h4 class="total">duree total: {{ dureeTotal }} mn</h4>
-    <h4 class="total">fin: {{ dateFinStr }} </h4>
-    <h4 class="total">Total: {{ prixTotal }} Ar</h4>
-    
-    <div *ngIf="dateTimeForm">
-      <form  [formGroup]="dateTimeForm" (ngSubmit)="onSubmit()">
-       <div class="form-group">
-         <label for="selectedDateTime">Choisir la date/heure:</label>
-         <input
-         id="requestdate" 
-         type="datetime-local" 
-         class="form-control" 
-         formControlName="requestdate" 
-         />
-       </div>
-       <button type="submit" class="btn btn-primary">Calculer</button>
-       <button  class="btn btn-primary" (click)="validateRv()">Valider le rendez-vous</button>
-     </form>
-    </div>
-    
+  <h1 class="cartCard__title">Details des rendez-vous</h1>
+  <ng-container *ngIf="cartAppointments$ | async as appointments">
+    <ng-container *ngIf="appointments.length > 0; else emptyList">
+      <div class="table-responsive">
+        <table class="table table-striped mlr-10">
+          <thead class="thead -primary">
+            <tr>
+              <th th scope="col">designation</th>
+              <th th scope="col">duree (en mn)</th>
+              <th th scope="col">prix (en Ar)</th>
+              <th th scope="col">employe</th>
+              <th th scope="col">Date et heure debut</th>
+              <th th scope="col">Date et heure fin</th>
+              <th th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appointment of appointments; let i = index">
+              <td>{{ appointment.service?.designation }}</td>
+              <td>{{ appointment.service?.duree }}</td>
+              <td>{{ appointment.service?.prix }}</td>
+              <td>
+                <select #selectElem (change)="onSelect(selectElem.selectedIndex, i)">
+                  <option value="">Choisir un employe</option>
+                  <option *ngFor="let employe of employes; let j = index" [value]="i">{{ employe.name }}  {{ employe.firstname }}</option>
+                </select>
+              </td>
+              <td>                 
+                <input
+                id="requestdate" 
+                type="datetime-local" 
+                [(ngModel)]="appointment.startDate"
+                (change)="formatDateTime(appointment)"
+                />                                                    
+              </td>
+              <td>
+                {{ this.endDateStr }}
+              </td>
+              <td>
+                <button (click)="removeProductFromCart(i)" color="primary-dark">
+                supprimer
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>                                            
+    </ng-container>
+  </ng-container>        
+  <h4 class="total">duree total: {{ dureeTotal }} mn</h4>
+  <h4 class="total">Total: {{ prixTotal }} Ar</h4>            
   
-    <ng-template #emptyList>
-      Il n'y a pas de rendez-vous pour le moment, pensez à consulter nos services.
-    </ng-template>
-  </div>
+  <form>
+    <button type="submit" class="btn btn-primary">Calculer</button>
+    <button  class="btn btn-primary" (click)="validateRv()">Valider le rendez-vous</button>
+  </form>                  
+    
+</div>
+<ng-template #emptyList>
+  Il n'y a pas de rendez-vous pour le moment, pensez à consulter nos services. 
+</ng-template>

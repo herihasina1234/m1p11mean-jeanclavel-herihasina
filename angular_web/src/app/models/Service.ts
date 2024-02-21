@@ -2,9 +2,9 @@ export class Service {
     id: string;
     designation: string;
     description: string;
-    duree: Number;
-    prix: Number;
-    commission: Number;
+    duree: number;
+    prix: number;
+    commission: number;
   
     constructor() {
       this.id = '';

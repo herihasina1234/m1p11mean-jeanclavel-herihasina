@@ -1,16 +1,24 @@
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import { LocalStorageService } from '../local_storage/local-storage.service';
+import { User } from 'src/app/models/User';
+import { UserService } from '../api/user_service/user.service';
 
 @Injectable({ providedIn: 'root' })
 export class JWTTokenService {
 
   jwtToken!: string;
   decodedToken!: { [key: string]: string; };
+  user: User | undefined;
 
-  constructor() {
+  constructor(private localStorage: LocalStorageService, private userService: UserService) {
+    // this.setToken(this.localStorage.get('token'))
+    this.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWM2OGNlYWE0ZjI4OGMyZjVmZmQ1MGIiLCJpYXQiOjE3MDg1NTEyNjYsImV4cCI6MTcwODYzNzY2Nn0.vESwtLkJnoIwxwZZvpaCmuef4ksMjf1eJIDI1x9MN5Y')
+
+    this.decodeToken()
   }
 
-  setToken(token: string) {
+  setToken(token: string | null) {
     if (token) {
       this.jwtToken = token;
     }
@@ -19,6 +27,15 @@ export class JWTTokenService {
   decodeToken() {
     if (this.jwtToken) {
       this.decodedToken = jwtDecode(this.jwtToken);
+      this.userService.get(this.decodedToken['userId'])
+      .subscribe({
+        next: (response: any) =>  {
+          this.user = response.response.data;                     
+          console.info(response.response.message);
+        }, 
+        error: (e: any) => console.error(e),
+        complete: () => console.info("decodeToken complete successfuly")
+      })   
     }
   }
 

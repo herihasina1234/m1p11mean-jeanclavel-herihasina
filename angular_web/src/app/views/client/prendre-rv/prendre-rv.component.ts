@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Observable, Subject, map, takeUntil } from 'rxjs';
-import { Service } from 'src/app/models/Service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
 import { DateService } from 'src/app/services/date/date.service';
 import { User } from 'src/app/models/User';
 import { UserService } from 'src/app/services/api/user_service/user.service';
+import { Appointment } from 'src/app/models/Appointment';
+import { JWTTokenService } from 'src/app/services/token_service/jwt-token.service';
 
 @Component({
   selector: 'app-prendre-rv',
@@ -13,13 +14,13 @@ import { UserService } from 'src/app/services/api/user_service/user.service';
   styleUrl: './prendre-rv.component.scss'
 })
 export class PrendreRvComponent implements OnInit{
-  cartServices$: Observable<Service[]> = this.prendreRvService.cartServices$;
+  cartAppointments$: Observable<Appointment[]> = this.prendreRvService.cartAppointments$;
   prixTotal: number = 0;
   dureeTotal: number = 0;
   dateDebut: Date = new Date();
   dateFin: Date = new Date();
   dateDebutStr: string = '';
-  dateFinStr: string = '';
+  endDateStr: string = '';
   employes: User[] = [];
   private destroyed$ = new Subject<void>();    
 
@@ -30,7 +31,8 @@ export class PrendreRvComponent implements OnInit{
     private prendreRvService: PrendreRvService,
     private userService: UserService,
     private dateService: DateService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private tokenService: JWTTokenService
     ) {
     }
     
@@ -45,61 +47,18 @@ export class PrendreRvComponent implements OnInit{
   }
 
   private calculate(): void {
-    this.calculPrixTotal()    
-    this.calculDureeTotal()
-    this.calculDate()    
+    // this.calculPrixTotal()    
+    // this.calculDureeTotal()
+    // this.calculDate()    
   }
 
-  //calcul prix total
-  calculPrixTotal(){
-    this.cartServices$
-      .pipe(
-        map((cartServices) => {
-          return cartServices.reduce((acc, service) => {   
-            return acc + service.prix.valueOf()
-          }, 0);
-        }),
-        takeUntil(this.destroyed$)
-      )
-      .subscribe((total) => {
-        this.prixTotal = total;
-      });
-  }
-
-  //calcul duree total
-  calculDureeTotal(){
-    this.cartServices$
-    .pipe(
-      map((cartServices) => {
-          return cartServices.reduce((acc, service) => {   
-            return acc + service.duree.valueOf()
-          }, 0);
-        }),
-        takeUntil(this.destroyed$)
-      )
-      .subscribe((total) => {
-        this.dureeTotal = total;
-      });
-  }
-
-  //calcule heure fin
-  calculDate(){
-    this.dateDebut = this.dateService.strToDate(this.dateTimeForm?.get('requestdate')?.value)
-    this.dateFin = this.dateService.strToDate(this.dateTimeForm?.get('requestdate')?.value)
-    this.dateFin.setMinutes(this.dateFin.getMinutes() + this.dureeTotal)
-    
-    //formater pour afficher
-    this.dateDebutStr = this.dateService.formatToDisplay(this.dateDebut)
-    this.dateFinStr = this.dateService.formatToDisplay(this.dateFin)
-  }
-
+  //                                                                                                                          
   //initialisation listes des employes
   initEmployes(){
-   this.userService.get("employe")
+   this.userService.get("fonction=employe")
     .subscribe({
       next: (response: any) =>  {
         this.employes = response.response.data;
-        console.log(this.employes);
         console.info(response.response.message);
       }, 
       error: (e: any) => console.error(e),
@@ -107,18 +66,48 @@ export class PrendreRvComponent implements OnInit{
     })  
   }
 
-  // Méthode appelée lorsqu'une option est sélectionnée
-  onSelect(optionValue: Event) {    
-    const selected = ( optionValue?.target as HTMLSelectElement ).value
-    console.log(selected);
-  }
-
   onSubmit(): void {
     this.calculate();
   }
 
-  validateRv(): void {
-    alert("validateRv successfull");
+  
+  onSelect(employee_index: number, appointment_index: number){    
+    this.prendreRvService.updateEmploye(this.employes[employee_index], appointment_index)
+  }
+
+
+  validateRv(): void {       
+    this.prendreRvService.save();
+  }
+
+  saveRendezVous() {       
+    const data = {
+      client: "65d3dfb4e8d71a29306ed2a8",
+      taches: [],
+      dateDebut: this.dateService.formatToDb(this.dateDebut),
+      dateFin: this.dateService.formatToDb(this.dateFin),
+      status: 1
+    };
+    
+    // this.userService.create(data)
+    //   .subscribe(
+    //     (response: any) => { 
+    //       this.authenticationService.login(this.user);
+    //     }, 
+    //     (error: any) => console.log(error)
+    //   )
+  };
+
+  formatDateTime(appointment: Appointment){    
+    let ed = this.dateService.strToDate(appointment.startDate)
+    if(appointment.service?.duree)
+      ed.setMinutes(appointment.service.duree + ed.getMinutes())
+    
+    //formatage pour l'insertion dans monogodb
+    appointment.startDate = appointment.startDate + ':00Z'
+    appointment.endDate = this.dateService.formatToDb(ed)
+    
+    this.endDateStr = this.dateService.formatToDisplay(ed)    
   }
   
   removeProductFromCart = (id: number): void => {

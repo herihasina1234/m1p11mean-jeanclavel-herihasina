@@ -91,4 +91,18 @@ module.exports.findByFonction = async (req, res) => {
         })            
             
 }
+module.exports.findById = async (req, res) => {        
+    await User.findById(req.params.id)
+        .then ( user => {    
+            const response = {
+                message: `user obtained successfully`,
+                data: user                 
+            }
+            res.status(201).json({ response: response });
+        })
+        .catch( error => {
+            return res.status(400).json({message: error.message, data: error})
+        })            
+            
+}
 

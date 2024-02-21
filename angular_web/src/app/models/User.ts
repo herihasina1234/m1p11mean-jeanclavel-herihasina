@@ -1,4 +1,5 @@
 export class User {
+    id: string;
     name: string;
     firstname: string;
     email: string;
@@ -6,6 +7,7 @@ export class User {
     fonction: string;
   
     constructor() {
+      this.id = '';
       this.name = '';
       this.firstname = '';
       this.email = '';
