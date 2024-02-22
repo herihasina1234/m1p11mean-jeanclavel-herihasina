@@ -1,7 +1,7 @@
 const Appointments = require("../models/Appointments");
 
 module.exports.registre_appointment = async(req, res) => {
-    const { customer, employee, service, startDate, endDate, createdAt = new Date(), status = "new" } = req.body;
+    const { customer, employee, service, startDate, endDate, createdAt = new Date(), status = false } = req.body;
 
     try {
         const appointment = await Appointments.create({ customer, employee, service, startDate, endDate, createdAt, status });
@@ -20,9 +20,10 @@ module.exports.registre_appointment = async(req, res) => {
 module.exports.save_many = async(req, res) => {
     const appointments = req.body;
     const createdAt = new Date();
-    const status = "new";
-    const listCreated = [];
-    const listAborted = [];
+    const status = false;
+    const paymentStatus = false;
+    let listCreated = [];
+    let listAborted = [];
     const message = "request to add appointments completed"                 
     
     appointments.forEach(async appointment => {         
@@ -31,8 +32,8 @@ module.exports.save_many = async(req, res) => {
         const service = appointment.service._id 
         const startDate = appointment.startDate
         const endDate = appointment.endDate   
-        console.log(appointment)
-        await Appointments.create({ customer, employee, service, startDate, endDate, createdAt, status  })
+        
+        await Appointments.create({ customer, employee, service, startDate, endDate, createdAt, status, paymentStatus })
             .then ( app => {                   
                 listCreated.push(app);
             })
@@ -52,7 +53,7 @@ module.exports.appointment_list = async(req, res) => {
             .populate('employee')
             .populate('service');
         const response = {
-            message: "List of available offer",
+            message: "List of available appointment",
             data: appointment
         }
         res.status(201).json({ response: response });

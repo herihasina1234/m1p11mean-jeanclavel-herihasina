@@ -1,19 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Appointment } from 'src/app/models/Appointment';
+import { Payment } from 'src/app/models/Payment';
 import { GlobalConstants } from '../../global-constants';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppointmentService {
-  baseUrl = GlobalConstants.apiURL + "appointment";
+export class PaymentService {
+  baseUrl = GlobalConstants.apiURL + "payments";
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(this.baseUrl);
+  getAll(): Observable<Payment[]> {
+    return this.http.get<Payment[]>(this.baseUrl);
   }
 
   get(id: any): Observable<any> {
@@ -21,11 +21,7 @@ export class AppointmentService {
   }
 
   create(data: any): Observable<any> {        
-    return this.http.post(this.baseUrl, data);
-  }
-
-  createMany(data: any): Observable<any> {        
-    return this.http.post(`${this.baseUrl}/many`, data);
+    return this.http.post(this.baseUrl, data, { observe: 'response' });
   }
 
   update(id: any, data: any): Observable<any> {
@@ -40,7 +36,7 @@ export class AppointmentService {
     return this.http.delete(this.baseUrl);
   }
 
-  getBySearchParams(params: any): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.baseUrl}/search?paymentStatus=${params.paymentStatus}&status=${params.status}&keyword=${params.keyword}`);
+  findByTitle(title: any): Observable<Payment[]> {
+    return this.http.get<Payment[]>(`${this.baseUrl}?title=${title}`);
   }
 }

@@ -79,24 +79,7 @@ export class PrendreRvComponent implements OnInit{
   validateRv(): void {       
     this.prendreRvService.save();
   }
-
-  saveRendezVous() {       
-    const data = {
-      client: "65d3dfb4e8d71a29306ed2a8",
-      taches: [],
-      dateDebut: this.dateService.formatToDb(this.dateDebut),
-      dateFin: this.dateService.formatToDb(this.dateFin),
-      status: 1
-    };
-    
-    // this.userService.create(data)
-    //   .subscribe(
-    //     (response: any) => { 
-    //       this.authenticationService.login(this.user);
-    //     }, 
-    //     (error: any) => console.log(error)
-    //   )
-  };
+  
 
   formatDateTime(appointment: Appointment){    
     let ed = this.dateService.strToDate(appointment.startDate)

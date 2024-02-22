@@ -10,7 +10,7 @@ module.exports.find = async (req, res) => {
             res.status(201).json({ response: response });
         })
         .catch( error => {
-            return res.status(400).json({message: error.message, data: error})
+            res.status(400).json({message: error.message, data: error})
         })            
             
 }
@@ -24,6 +24,6 @@ module.exports.save = async (req, res) => {
             res.status(201).json({message: message, data: service});
         })
         .catch( error => {
-            return res.status(400).json({message: error.message, data: error})
+            res.status(400).json({message: error.message, data: error})
         })                        
 }

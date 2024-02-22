@@ -13,7 +13,7 @@ export class JWTTokenService {
 
   constructor(private localStorage: LocalStorageService, private userService: UserService) {
     // this.setToken(this.localStorage.get('token'))
-    this.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWM2OGNlYWE0ZjI4OGMyZjVmZmQ1MGIiLCJpYXQiOjE3MDg1NTEyNjYsImV4cCI6MTcwODYzNzY2Nn0.vESwtLkJnoIwxwZZvpaCmuef4ksMjf1eJIDI1x9MN5Y')
+    this.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWM2OGNlYWE0ZjI4OGMyZjVmZmQ1MGIiLCJpYXQiOjE3MDg2MzgxNjQsImV4cCI6MTcwODcyNDU2NH0.go0T03SDO9akMIrYDQZoPicHv6UOxIy5daujp70c6z4')
 
     this.decodeToken()
   }

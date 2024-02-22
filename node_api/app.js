@@ -14,6 +14,7 @@ app.use(bodyParser.json())
 require('./src/routes/user_route')(app)
 require('./src/routes/service_route')(app)
 require('./src/routes/appointment_route')(app)
+require('./src/routes/payment_route')(app)
 
 // /*GESTION_DES_ERREURS===============================================================================================================================================================================================*/
 mongoose_created

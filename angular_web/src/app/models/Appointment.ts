@@ -9,12 +9,14 @@ export class Appointment {
     startDate: string;
     endDate: string;
     createdAt: string;
+    status: boolean;
   
     constructor() {
       this.id = '';
       this.startDate = '';
       this.endDate = '';
       this.createdAt = '';
+      this.status = false
     }    
   }
   

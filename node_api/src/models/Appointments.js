@@ -25,7 +25,8 @@ const appointmentSchema = new Schema({
     createdAt: {
         type: Date,
     },
-    status: String
+    status: Boolean,
+    paymentStatus: Boolean
 });
 
 const Appointments = mongoose.model('Appointments', appointmentSchema);
