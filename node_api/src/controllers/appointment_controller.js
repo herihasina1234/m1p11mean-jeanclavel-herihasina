@@ -64,31 +64,46 @@ module.exports.appointment_list = async(req, res) => {
 }
 
 module.exports.findByParams = async(req, res) => {    
-    await Appointments.find(req.query)
-        .populate('customer')
-        .populate('employee')
-        .populate('service')               
-        .then ( appointments => {    
-            let result = []  
-            
-            if(!req.query.keyword)  result = appointments
-            else {
-                // Filtrer
-                const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
-                appointments.forEach(appointment => {
-                    if(
-                        regex.test(appointment.service.designation) ||
-                        regex.test(appointment.employee.name) ||
-                        regex.test(appointment.employee.firstname) 
+
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const startIndex = (page - 1) * pageSize; //0
+
+    let filter = Object.assign({}, req.query);
+    delete filter.page;
+    delete filter.pageSize;
+
+    await Appointments.find(filter)
+    .populate('customer')
+    .populate('employee')
+    .populate('service')   
+    .sort({ startDate: 'desc' })            
+    .then ( appointments => {    
+        let result = []  
+        
+        if(!req.query.keyword)  result = appointments
+        else {
+            // Filtrer
+            const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
+            appointments.forEach(appointment => {
+                if(
+                    regex.test(appointment.service.designation) ||
+                    regex.test(appointment.employee.name) ||
+                    regex.test(appointment.employee.firstname) 
                     ) 
-                        result.push(appointment)                
+                    result.push(appointment)                
                 });
             }
-
-            const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
-            message= `appointments list with params ${queryParams} obtained successfully`;                
-                       
-            res.status(201).json({ message: message, data: result });
+            
+        const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+        const paginatedResult = result.slice(startIndex, endIndex + 1);
+        const totalPages = Math.ceil(result.length / pageSize);
+        const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
+        
+        message= `appointments list with params ${queryParams} obtained successfully`;
+    
+                    
+        res.status(201).json({ message: message, data: paginatedResult, totalPages: totalPages });
         })
         .catch( error => {
             res.status(400).json({message: error.message, data: error})

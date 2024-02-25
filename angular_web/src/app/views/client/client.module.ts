@@ -2,15 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClientRoutingModule } from './client-routing.module';
 import { ServicesListComponent } from './services-list/services-list.component';
-import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, AccordionModule, SharedModule } from '@coreui/angular';
+import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, AccordionModule, SharedModule, PaginationModule } from '@coreui/angular';
 import { PrendreRvComponent } from 'src/app/views/client/prendre-rv/prendre-rv.component';
+import { PaginationComponent } from 'src/app/views/client/pagination/pagination.component';
 import { AppointmentListComponent } from 'src/app/views/client/appointment-list/appointment-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     ServicesListComponent,
     PrendreRvComponent,
-    AppointmentListComponent
+    AppointmentListComponent,
+    PaginationComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +26,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     ModalModule,
     AccordionModule,
-    SharedModule
+    SharedModule,
+    PaginationModule
   ]  
 })
 export class ClientModule { }

@@ -9,9 +9,14 @@ import { GlobalConstants } from '../../global-constants';
 })
 export class AppointmentService {
   baseUrl = GlobalConstants.apiURL + "appointment";
+  
   private dataListSubject: BehaviorSubject<any[]> = new BehaviorSubject<Appointment[]>([]);
+  private totalPagesSubject: BehaviorSubject<any> = new BehaviorSubject<number>(0);
+  private paginationTableSubject: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+  
   public dataList$: Observable<Appointment[]> = this.dataListSubject.asObservable();
-
+  public totalPages$: Observable<number> = this.totalPagesSubject.asObservable();
+  public paginationTable$: Observable<number[]> = this.paginationTableSubject.asObservable(); 
 
   constructor(private http: HttpClient) { }
 
@@ -46,14 +51,15 @@ export class AppointmentService {
   getBySearchParams(params: any): void {
     const queryParams = Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&');
 
-    console.log(queryParams)
     this.http.get<Appointment[]>(`${this.baseUrl}/search?${queryParams}`).subscribe({
       next: (response: any) =>  {
         this.dataListSubject.next(response.data);
+        this.totalPagesSubject.next(response.totalPages)
+        this.paginationTableSubject.next(Array.from({length: response.totalPages}, (_, i) => i + 1));
         console.info(response.message);
       }, 
       error: (e: any) => console.error(e),
-      complete: () => console.info("getAppointments completed succesfully")
+      complete: () => console.info("getBySearchParams completed succesfully")
 
     })
   }

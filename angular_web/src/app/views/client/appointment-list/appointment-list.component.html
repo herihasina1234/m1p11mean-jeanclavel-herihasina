@@ -108,7 +108,17 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>                                                    
+                </div>  
+                <ng-container *ngIf="totalPages$ | async as totalPages">
+                    <app-pagination *ngIf="paginationTable$ | async as paginationTable"
+                        [currentPage]="currentPage" 
+                        [totalPages]="totalPages" 
+                        [paginationTable]="paginationTable"
+                        (pageChange)="onPageChange($event)"
+                    >
+                    </app-pagination>                
+                </ng-container>              
+                                          
             </ng-container>      
         </ng-container>
       <ng-template #emptyList>
