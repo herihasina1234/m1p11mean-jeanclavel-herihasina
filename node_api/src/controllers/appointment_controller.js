@@ -63,6 +63,39 @@ module.exports.appointment_list = async(req, res) => {
 
 }
 
+module.exports.findByParams = async(req, res) => {    
+    await Appointments.find(req.query)
+        .populate('customer')
+        .populate('employee')
+        .populate('service')               
+        .then ( appointments => {    
+            let result = []  
+            
+            if(!req.query.keyword)  result = appointments
+            else {
+                // Filtrer
+                const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
+                appointments.forEach(appointment => {
+                    if(
+                        regex.test(appointment.service.designation) ||
+                        regex.test(appointment.employee.name) ||
+                        regex.test(appointment.employee.firstname) 
+                    ) 
+                        result.push(appointment)                
+                });
+            }
+
+            const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
+            message= `appointments list with params ${queryParams} obtained successfully`;                
+                       
+            res.status(201).json({ message: message, data: result });
+        })
+        .catch( error => {
+            res.status(400).json({message: error.message, data: error})
+        })  
+
+}
+
 module.exports.count_appointment_per_day = async(req, res) => {
 
     try {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppointmentService } from 'src/app/services/api/appointment_service/appointment.service';
 import { PaymentService } from 'src/app/services/api/payment_service/payment.service';
 import { Appointment } from 'src/app/models/Appointment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-appointment-list',
@@ -9,11 +10,16 @@ import { Appointment } from 'src/app/models/Appointment';
   styleUrl: './appointment-list.component.scss'
 })
 export class AppointmentListComponent implements OnInit {
-  appointments: Appointment[] = [];
+  appointments$: Observable<Appointment[]> = this.appointmentService.dataList$;
   
-  paymentStatus: Boolean = false;
-  status: Boolean = false;
+  accordionIsVisible: boolean = false;
+  checkPayment: boolean = true;
+  checkStatus: boolean = true;
+  paymentStatus: boolean = true;
+  status: boolean = true;
   keyword: string = '';
+
+  items = [1, 2, 3, 4];
 
   constructor(
     private appointmentService: AppointmentService,
@@ -23,26 +29,39 @@ export class AppointmentListComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.getAppointments();
+    this.refreshAppointments();
+  }
+
+  onSearch(value: string){
+    this.keyword = value;
+    this.refreshAppointments();
+  }  
+
+  toggleAccordion(searchAccordion: any){
+    searchAccordion.toggleItem();
+    this.accordionIsVisible = !this.accordionIsVisible;
+    this.refreshAppointments();
   }
   
-  getAppointments(){
-    const status = 'unpaid'
-    // this.appointmentService.getAll()
-    this.appointmentService.getBySearchParams({ 
-      status: this.status, 
-      paymentStatus:this.paymentStatus, 
-      keyword: this.keyword
-    })
-      .subscribe({
-        next: (response: any) =>  {
-          this.appointments = response.response.data;                     
-          console.info(response.response.message);
-        }, 
-        error: (e: any) => console.error(e),
-        complete: () => console.info("getAppointments completed succesfully")
-      })    
+  refreshAppointments(): void {
+    let params:{ 
+      status?: boolean, 
+      paymentStatus?: boolean, 
+      keyword?: string,
+    } = { }
+    console.log(this.accordionIsVisible)
+    if(!this.accordionIsVisible){
+      params = {}
+    }
+    else{
+      if(this.checkPayment) params.paymentStatus = this.paymentStatus 
+      if(this.checkStatus) params.status = this.status 
+      if(this.keyword !== '') params.keyword = this.keyword
+    }
+
+    this.appointmentService.getBySearchParams(params);
   }
+
 
   payer(appt: any){
     const appointment = appt._id

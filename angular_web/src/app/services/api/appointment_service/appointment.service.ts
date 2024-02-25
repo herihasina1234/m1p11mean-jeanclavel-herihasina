@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Appointment } from 'src/app/models/Appointment';
 import { GlobalConstants } from '../../global-constants';
 
@@ -9,6 +9,9 @@ import { GlobalConstants } from '../../global-constants';
 })
 export class AppointmentService {
   baseUrl = GlobalConstants.apiURL + "appointment";
+  private dataListSubject: BehaviorSubject<any[]> = new BehaviorSubject<Appointment[]>([]);
+  public dataList$: Observable<Appointment[]> = this.dataListSubject.asObservable();
+
 
   constructor(private http: HttpClient) { }
 
@@ -40,7 +43,18 @@ export class AppointmentService {
     return this.http.delete(this.baseUrl);
   }
 
-  getBySearchParams(params: any): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.baseUrl}/search?paymentStatus=${params.paymentStatus}&status=${params.status}&keyword=${params.keyword}`);
+  getBySearchParams(params: any): void {
+    const queryParams = Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&');
+
+    console.log(queryParams)
+    this.http.get<Appointment[]>(`${this.baseUrl}/search?${queryParams}`).subscribe({
+      next: (response: any) =>  {
+        this.dataListSubject.next(response.data);
+        console.info(response.message);
+      }, 
+      error: (e: any) => console.error(e),
+      complete: () => console.info("getAppointments completed succesfully")
+
+    })
   }
 }

@@ -44,12 +44,11 @@ module.exports.save = async(req, res) => {
 module.exports.find = async(req, res) => {        
     await Payment.find()
         .populate('appointment')            
-        .then ( payments => {            
-            const message = "payment list obtained successfully"        
-            res.status(201).json({ message: message, data: payments });
+        .then ( app => {                   
+            listCreated.push(app);
         })
         .catch( error => {
-            res.status(400).json({message: error.message, data: error})
-        })
+            listAborted.push(appointment);
+        })  
 }
 
