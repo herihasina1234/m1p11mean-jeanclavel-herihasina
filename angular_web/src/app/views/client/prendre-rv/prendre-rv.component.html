@@ -38,9 +38,9 @@
                 {{ this.endDateStr }}
               </td>
               <td>
-                <button (click)="removeProductFromCart(i)" color="primary-dark">
-                supprimer
-                </button>
+                <button color="secondary" (click)="removeProductFromCart(i)" cButton>
+                  <svg cIcon name="cil-trash" class="sm"></svg>
+                </button>                
               </td>
             </tr>
           </tbody>
@@ -53,7 +53,14 @@
   
   <form>
     <button type="submit" class="btn btn-primary">Calculer</button>
-    <button  class="btn btn-primary" (click)="validateRv()">Valider le rendez-vous</button>
+    
+    <button  class="btn btn-primary" *ngIf="loading">
+      <c-spinner aria-hidden="true" size="sm" variant="grow"></c-spinner>
+      Loading...      
+    </button>        
+    <button  class="btn btn-primary" (click)="validateRv()" *ngIf="!loading">
+      Valider le rendez-vous
+    </button>
   </form>                  
     
 </div>

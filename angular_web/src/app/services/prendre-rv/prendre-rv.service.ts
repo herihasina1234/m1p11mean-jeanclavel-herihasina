@@ -22,12 +22,12 @@ export class PrendreRvService {
   addToCart(service: Service) {
     const currentProducts = [...this.cartAppointmentSubject.getValue()];
     const existingProductIndex = currentProducts.findIndex(
-      (p) => p.service?.id === service.id
+      (p) => p.service?._id === service._id
     );
 
     let appointment = new Appointment();
     appointment.service = service;   
-    appointment.customer = this.tokenService.user 
+    appointment.customer = this.tokenService.user;
     if (existingProductIndex < 0) {      
       // If the product doesn't exist in the cart, add it with quantity = 1
       this.cartAppointmentSubject.next([
@@ -35,6 +35,8 @@ export class PrendreRvService {
         { ...appointment },
       ]);
     } 
+
+    console.log(service)
   }
 
 
@@ -63,5 +65,6 @@ export class PrendreRvService {
         error: (e: any) => console.error(e),
         complete: () => console.info("save appointments completed succesfully")
       })   
+      return true;
   }
 }

@@ -45,9 +45,9 @@ module.exports.search = async (req, res) => {
 }
 
 module.exports.save = async (req, res) => {
-    let { designation, description, duree, prix, commission } = req.body;
+    let { designation, description, duree, prix, commission, img } = req.body;
 
-    await Service.create({ designation, description, duree, prix, commission })
+    await Service.create({ designation, description, duree, prix, commission, img })
         .then ( service => {                   
             const message = "service added successfully"                 
             res.status(201).json({message: message, data: service});

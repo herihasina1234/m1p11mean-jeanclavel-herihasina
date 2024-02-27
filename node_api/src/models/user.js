@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const { isEmail } = require('validator');
 
 const userSchema = new mongoose.Schema({
@@ -23,9 +24,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         length: [100, 'length max is 100 characters'],
     },
-    fonction: {
+    role: {
+        type: Schema.Types.ObjectId,
+        ref: 'Role',
+    },
+    avatar: {
         type: String,
-        length: [100, 'length max is 100 characters'],
+        required: [true, 'Please enter an avatar'],
+        minlength: [6, 'Minimum password length is 6 characters']
     }
 });
 

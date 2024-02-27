@@ -40,14 +40,14 @@ module.exports.login = async (req, res) => {
 
 module.exports.save = async (req, res) => {
     const salt = await bcrypt.genSalt();    
-    let { email, password, name, firstname, fonction } = req.body;
+    let { email, password, name, firstname, role, avatar } = req.body;
     
     //encrypt password
     bcrypt.hash(password, salt)
     .then( async hash => {
         //save user
         password = hash
-        await User.create({ email, password, name, firstname, fonction })
+        await User.create({ email, password, name, firstname, role, avatar })
             .then ( user => {                   
                 const message = "user added successfully"                 
                 res.status(201).json({message: message, data: user});
@@ -61,6 +61,7 @@ module.exports.save = async (req, res) => {
 module.exports.find = async (req, res) => {    
     
     await User.find()
+        .populate('role')
         .then ( users => {    
             const response = {
                 message: "list obtained successfully",
@@ -74,14 +75,15 @@ module.exports.find = async (req, res) => {
             
 }
 
-module.exports.findByFonction = async (req, res) => {    
-    const fonction = req.params.fonction;
-    var condition = {fonction: fonction};
+module.exports.findByRole = async (req, res) => {    
+    const fonction = req.params.role;
+    var condition = {role: role};
 
     await User.find(condition)
+        .populate('role')
         .then ( users => {    
             const response = {
-                message: `list of all ${fonction} user obtained successfully`,
+                message: `list of all ${role} user obtained successfully`,
                 data: users                 
             }
             res.status(201).json({ response: response });
@@ -93,6 +95,7 @@ module.exports.findByFonction = async (req, res) => {
 }
 module.exports.findById = async (req, res) => {        
     await User.findById(req.params.id)
+        .populate('role')   
         .then ( user => {    
             const response = {
                 message: `user obtained successfully`,

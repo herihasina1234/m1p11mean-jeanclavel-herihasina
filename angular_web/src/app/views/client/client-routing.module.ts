@@ -3,20 +3,24 @@ import { RouterModule, Routes } from '@angular/router';
 import { ServicesListComponent } from './services-list/services-list.component';
 import { PrendreRvComponent } from './prendre-rv/prendre-rv.component';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
+import { authorizationGuard } from 'src/app/guard/authorization.guard';
 
 
 const routes:Routes = [
   {
     path: 'services',
-    component: ServicesListComponent
+    component: ServicesListComponent,
+    canActivate: [authorizationGuard]    
   },
   {
     path: 'prendre-rv',
-    component: PrendreRvComponent
+    component: PrendreRvComponent,
+    canActivate: [authorizationGuard]    
   },
   {
-    path: 'appointment-future',
-    component: AppointmentListComponent
+    path: 'appointment',
+    component: AppointmentListComponent,
+    canActivate: [authorizationGuard]  
   }
 ] 
 

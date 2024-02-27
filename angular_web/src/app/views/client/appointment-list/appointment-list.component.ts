@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppointmentService } from 'src/app/services/api/appointment_service/appointment.service';
 import { PaymentService } from 'src/app/services/api/payment_service/payment.service';
 import { Appointment } from 'src/app/models/Appointment';
 import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-appointment-list',
@@ -14,6 +15,12 @@ export class AppointmentListComponent implements OnInit {
   totalPages$: Observable<number> = this.appointmentService.totalPages$;
   paginationTable$: Observable<number[]> = this.appointmentService.paginationTable$;
 
+  //ui variable
+  loading: boolean = false;
+  @ViewChild('staticBackdropModal') staticBackdropModal: any; // ViewChild to access the modal
+
+
+  
   //ui searchbar variable
 
   accordionIsVisible: boolean = false;
@@ -30,7 +37,7 @@ export class AppointmentListComponent implements OnInit {
   //pagination variable
 
   currentPage: number = 1;
-  pageSize: number = 1;
+  pageSize: number = 2;
   totalItems: number = 0;
   
 
@@ -38,7 +45,7 @@ export class AppointmentListComponent implements OnInit {
     private appointmentService: AppointmentService,
     private paymentService: PaymentService
   ){
-
+    
   }
   
   ngOnInit(): void {
@@ -85,17 +92,19 @@ export class AppointmentListComponent implements OnInit {
     this.currentPage = event;
     this.refreshAppointments();
   }
-
+  
 
   payer(appt: any){
+    this.loading = true;
     const appointment = appt._id
     const amount = appt.service?.prix
-    console.log(appt)
+    
     this.paymentService.create({ appointment, amount })
       .subscribe({
         next: (response: any) =>  {     
-          console.log(response)                        
           console.info(response.message);
+          this.staticBackdropModal.visible = false;
+          this.refreshAppointments();
         }, 
         error: (e: any) => console.error(e),
         complete: () => console.info("save payment completed succesfully")

@@ -50,7 +50,8 @@ export class ServicesListComponent implements OnInit {
     this.serviceService.getAllPaginate(params);
   }
   
-  addServiceToCart(service: Service){    
+  addServiceToCart(service: Service){ 
+    console.log("srvice", service)   
     this.prendreRvService.addToCart(service);
   };
 }

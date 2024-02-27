@@ -1,18 +1,21 @@
+import { Role } from './Role'
+
+
 export class User {
-    id: string;
+    _id: string;
     name: string;
     firstname: string;
     email: string;
     password: string;
-    fonction: string;
+    role: Role | undefined;
+    avatar: string | undefined;
   
     constructor() {
-      this.id = '';
+      this._id = '';
       this.name = '';
       this.firstname = '';
       this.email = '';
       this.password = '';
-      this.fonction = '';
     }
   }
   

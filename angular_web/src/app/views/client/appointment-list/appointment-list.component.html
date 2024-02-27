@@ -68,6 +68,7 @@
                                 <th th scope="col">employe</th>
                                 <th th scope="col">Date et heure debut</th>
                                 <th th scope="col">Date et heure fin</th>
+                                <th th scope="col">Status</th>
                                 <th th scope="col"></th>
                             </tr>
                         </thead>
@@ -78,9 +79,11 @@
                                 <td>{{ appointment.service?.prix }}</td>
                                 <td>{{ appointment.employee?.name }} {{ appointment.employee?.firstname }}</td>
                                 <td>{{ appointment.startDate }}</td>
-                                <td>{{ appointment.endDate }}</td>            
+                                <td>{{ appointment.endDate }}</td>      
+                                <td *ngIf="appointment.status; nonEffectue">effectu&eacute;</td>            
+                                <td #nonEffectue>Pas effectu&eacute;</td>            
                                 <td>
-                                    <button [cModalToggle]="staticBackdropModal.id" cButton>payer</button>
+                                    <button [cModalToggle]="staticBackdropModal.id" *ngIf="!appointment.paymentStatus" cButton>payer</button>
         
                                     <c-modal #staticBackdropModal backdrop="static" id="staticBackdropModal">
                                     <c-modal-header>
@@ -101,7 +104,11 @@
                                         <button [cModalToggle]="staticBackdropModal.id" cButton color="secondary">
                                         Annuler
                                         </button>
-                                        <button cButton color="primary" (click)="payer(appointment)">Payer</button>
+                                        <button cButton color="primary" (click)="payer(appointment)" *ngIf="!loading">Payer</button>
+                                        <button cButton color="secondary" *ngIf="loading" disabled>
+                                            <c-spinner aria-hidden="true" size="sm" variant="grow"></c-spinner>
+                                            Loading...
+                                        </button>
                                     </c-modal-footer>
                                     </c-modal>
                                 </td>

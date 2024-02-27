@@ -33,7 +33,7 @@ export class AppointmentService {
   }
 
   createMany(data: any): Observable<any> {        
-    return this.http.post(`${this.baseUrl}/many`, data);
+    return this.http.post(`${this.baseUrl}/many`, data, { observe: 'response' });
   }
 
   update(id: any, data: any): Observable<any> {
@@ -53,6 +53,7 @@ export class AppointmentService {
 
     this.http.get<Appointment[]>(`${this.baseUrl}/search?${queryParams}`).subscribe({
       next: (response: any) =>  {
+        console.log(response.data)
         this.dataListSubject.next(response.data);
         this.totalPagesSubject.next(response.totalPages)
         this.paginationTableSubject.next(Array.from({length: response.totalPages}, (_, i) => i + 1));

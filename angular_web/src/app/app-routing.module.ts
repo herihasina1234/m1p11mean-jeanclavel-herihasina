@@ -89,7 +89,6 @@ const routes: Routes = [
   {
     path: '500',
     component: Page500Component,
-    canActivate: [authorizationGuard],
     data: {
       title: 'Page 500'
     }

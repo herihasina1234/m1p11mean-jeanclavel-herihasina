@@ -5,21 +5,21 @@ import { User } from "src/app/models/User";
 import { Router } from "@angular/router";
 import { LocalStorageService } from "../local_storage/local-storage.service";
 import { Observable } from "rxjs/internal/Observable";
+import { JWTTokenService } from "../token_service/jwt-token.service";
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {  
   baseURL: string = GlobalConstants.apiURL + "login";
 
-  constructor(private http: HttpClient, private localStorage: LocalStorageService,
-    private route: Router) {
-  }
+  public errorMessage: string | undefined;
 
-  // login(user: User): Observable<any> {
-  //   const headers = { 'content-type': 'application/json' }
-  //   const body = { email: user.email, password: user.password };
-  //   return this.http.post(this.baseURL, body, { headers: new HttpHeaders() })
-  // }
+  constructor(
+    private http: HttpClient, 
+    private localStorage: LocalStorageService,
+    private route: Router,
+    private tokenService: JWTTokenService
+  ) {}
 
   query_login(user: User): Observable<any> {
     const headers = { 'content-type': 'application/json' }
@@ -27,21 +27,20 @@ export class AuthenticationService {
     return this.http.post(this.baseURL, body, { headers: new HttpHeaders() })
   }
   
-  login(user: User): void {
-    this.query_login(user).subscribe(
-      data => {
+  login(user: User) {    
+    this.query_login(user)
+    .subscribe({
+      next: ( data ) => {
         this.localStorage.set('token', data.token);
-        console.log(data.token);
-        this.route.navigate(['/dashboard']);
-      },
-      err => {
-        console.log(`error in login: ${err.message}`);
-        console.log(err);
         
-        //add parameter to display the error
-        this.route.navigate(['/login?err']);
-      }
-    );
+        if(user.role?.designation === 'client')
+          this.route.navigate(['/clients/services']);
+      },
+      error: (e: any) => {
+        console.error(e)
+      },
+      complete: () => console.info("login complete successfuly")
+    });        
   }
 
 

@@ -7,6 +7,8 @@ import { User } from 'src/app/models/User';
 import { UserService } from 'src/app/services/api/user_service/user.service';
 import { Appointment } from 'src/app/models/Appointment';
 import { JWTTokenService } from 'src/app/services/token_service/jwt-token.service';
+import { IconSetService } from '@coreui/icons-angular';
+import { cilTrash } from '@coreui/icons';
 
 @Component({
   selector: 'app-prendre-rv',
@@ -22,7 +24,10 @@ export class PrendreRvComponent implements OnInit{
   dateDebutStr: string = '';
   endDateStr: string = '';
   employes: User[] = [];
-  private destroyed$ = new Subject<void>();    
+  private destroyed$ = new Subject<void>();   
+  
+  //ui variable
+  loading = false;
 
   // Define FormGroup to manage the form
   dateTimeForm: FormGroup | undefined | null;    
@@ -32,8 +37,9 @@ export class PrendreRvComponent implements OnInit{
     private userService: UserService,
     private dateService: DateService,
     private formBuilder: FormBuilder,
-    private tokenService: JWTTokenService
+    public iconSet: IconSetService
     ) {
+      iconSet.icons = { cilTrash };
     }
     
   ngOnInit(): void {
@@ -76,8 +82,9 @@ export class PrendreRvComponent implements OnInit{
   }
 
 
-  validateRv(): void {       
-    this.prendreRvService.save();
+  validateRv(): void {     
+    this.loading = true;  
+    this.loading = !this.prendreRvService.save();
   }
   
 

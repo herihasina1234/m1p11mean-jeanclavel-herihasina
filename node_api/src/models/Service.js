@@ -20,6 +20,10 @@ const serviceSchema = new mongoose.Schema({
     commission: {
         type: Number,
         required: [true, 'Please enter a commission']
+    },
+    img: {
+        type: String,
+        required: [true, 'Please enter an image']
     }
 });
 

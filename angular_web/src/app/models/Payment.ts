@@ -1,13 +1,13 @@
 import { Appointment } from './Appointment'
 
 export class Payment {
-    id: string;
+    _id: string;
     appointment: Appointment | undefined;
     amount: number;
     paymentDate: string;
   
     constructor() {
-      this.id = '';
+      this._id = '';
       this.amount = 0;
       this.paymentDate = '';      
     }    

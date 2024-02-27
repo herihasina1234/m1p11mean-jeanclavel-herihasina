@@ -12,9 +12,8 @@ export class JWTTokenService {
   user: User | undefined;
 
   constructor(private localStorage: LocalStorageService, private userService: UserService) {
-    // this.setToken(this.localStorage.get('token'))
-    this.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWM2OGNlYWE0ZjI4OGMyZjVmZmQ1MGIiLCJpYXQiOjE3MDg2MzgxNjQsImV4cCI6MTcwODcyNDU2NH0.go0T03SDO9akMIrYDQZoPicHv6UOxIy5daujp70c6z4')
-
+    this.setToken(this.localStorage.get('token'))
+    
     this.decodeToken()
   }
 
