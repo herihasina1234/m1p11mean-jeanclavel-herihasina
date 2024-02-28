@@ -6,19 +6,16 @@ export class Appointment {
     customer: User | undefined;
     employee: User | undefined;
     service: Service | undefined;
-    startDate: string;
-    endDate: string;
-    createdAt: string;
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+    createdAt: Date | undefined;
     paymentStatus: boolean;
     status: boolean;
   
     constructor() {
       this._id = '';
-      this.startDate = '';
-      this.endDate = '';
-      this.createdAt = '';
-      this.paymentStatus = false
-      this.status = false
+      this.paymentStatus = false;
+      this.status = false;
     }    
   }
   

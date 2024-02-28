@@ -44,4 +44,26 @@ export class DateService {
     let seconds = 0
     return new Date(year, month - 1, day, hours, minutes, seconds);
   }
+
+  // dd/MM/YYYY hh:mm:ss => // YYYY-MM-DDThh:mm
+  reformat(dateTime: Date){
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Use 24-hour format
+        timeZone: 'Africa/Nairobi' // East Africa Time (EAT) timezone
+      };
+        
+    const dateString = dateTime.toLocaleString('fr-FR', options);    
+    
+    let [datePart, timePart] = dateString.split(' ');
+    let [day, month, year] = datePart.split('/');
+    let [hours, minutes] = timePart.split(':');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
 }

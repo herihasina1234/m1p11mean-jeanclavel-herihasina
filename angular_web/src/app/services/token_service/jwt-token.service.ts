@@ -23,10 +23,10 @@ export class JWTTokenService {
     }
   }
 
-  decodeToken() {
+  async decodeToken() {
     if (this.jwtToken) {
       this.decodedToken = jwtDecode(this.jwtToken);
-      this.userService.get(this.decodedToken['userId'])
+      await this.userService.get(this.decodedToken['userId'])
       .subscribe({
         next: (response: any) =>  {
           this.user = response.response.data;                     

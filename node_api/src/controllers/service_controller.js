@@ -15,6 +15,23 @@ module.exports.find = async (req, res) => {
             
 }
 
+
+module.exports.findById = async (req, res) => {        
+    await Service.findById(req.params.id)
+        .then ( services => {    
+            const response = {
+                message: "service obtained successfully",
+                data: services                 
+            }            
+            res.status(201).json({ response: response });
+        })
+        .catch( error => {
+            res.status(400).json({message: error.message, data: error})
+        })            
+            
+}
+
+
 module.exports.search = async (req, res) => {      
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;

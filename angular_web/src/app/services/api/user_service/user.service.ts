@@ -34,7 +34,7 @@ export class UserService {
     return this.http.delete(this.baseUrl);
   }
 
-  findByTitle(title: any): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}?title=${title}`);
+  findByRole(role: any): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/role=${role}`);
   }
 }

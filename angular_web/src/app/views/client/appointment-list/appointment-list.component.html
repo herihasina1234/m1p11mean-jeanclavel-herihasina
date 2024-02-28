@@ -78,8 +78,8 @@
                                 <td>{{ appointment.service?.duree }}</td>
                                 <td>{{ appointment.service?.prix }}</td>
                                 <td>{{ appointment.employee?.name }} {{ appointment.employee?.firstname }}</td>
-                                <td>{{ appointment.startDate }}</td>
-                                <td>{{ appointment.endDate }}</td>      
+                                <td>{{ appointment.startDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                                <td>{{ appointment.endDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>      
                                 <td *ngIf="appointment.status; nonEffectue">effectu&eacute;</td>            
                                 <td #nonEffectue>Pas effectu&eacute;</td>            
                                 <td>
@@ -94,8 +94,8 @@
                                         <ul cListGroup>
                                             <li cListGroupItem><strong>Designation: </strong>{{ appointment.service?.designation }}</li>
                                             <li cListGroupItem><strong>Duree: </strong>{{ appointment.service?.duree }} mn</li>
-                                            <li cListGroupItem><strong>Debut: </strong>{{ appointment.startDate }}</li>
-                                            <li cListGroupItem><strong>Fin: </strong>{{ appointment.endDate }}</li>
+                                            <li cListGroupItem><strong>Debut: </strong>{{ appointment.startDate | date:'dd/MM/yyyy HH:mm:ss' }}</li>
+                                            <li cListGroupItem><strong>Fin: </strong>{{ appointment.endDate | date:'dd/MM/yyyy HH:mm:ss' }}</li>
                                             <li cListGroupItem><strong>Employe: </strong>{{ appointment.employee?.name }} {{ appointment.employee?.firstname }}</li>                  
                                             <li cListGroupItem><strong>Prix: </strong>{{ appointment.service?.prix }} Ar</li>                  
                                         </ul>                                                                    

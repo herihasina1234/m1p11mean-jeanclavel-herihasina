@@ -3,6 +3,7 @@ import { AppointmentService } from 'src/app/services/api/appointment_service/app
 import { PaymentService } from 'src/app/services/api/payment_service/payment.service';
 import { Appointment } from 'src/app/models/Appointment';
 import { Observable } from 'rxjs';
+import { JWTTokenService } from 'src/app/services/token_service/jwt-token.service';
 
 
 @Component({
@@ -11,6 +12,9 @@ import { Observable } from 'rxjs';
   styleUrl: './appointment-list.component.scss'
 })
 export class AppointmentListComponent implements OnInit {
+  //autoRefresh variable
+  private intervalId?: number;
+  
   appointments$: Observable<Appointment[]> = this.appointmentService.dataList$;  
   totalPages$: Observable<number> = this.appointmentService.totalPages$;
   paginationTable$: Observable<number[]> = this.appointmentService.paginationTable$;
@@ -18,8 +22,6 @@ export class AppointmentListComponent implements OnInit {
   //ui variable
   loading: boolean = false;
   @ViewChild('staticBackdropModal') staticBackdropModal: any; // ViewChild to access the modal
-
-
   
   //ui searchbar variable
 
@@ -43,13 +45,20 @@ export class AppointmentListComponent implements OnInit {
 
   constructor(
     private appointmentService: AppointmentService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private tokenService: JWTTokenService
   ){
-    
   }
   
   ngOnInit(): void {
-    this.refreshAppointments();
+    this.intervalId = window.setInterval(() => {
+      this.refreshAppointments();
+    }, 100000);
+  }
+
+  ngOnDestroy(): void {
+    if(this.intervalId)
+      clearInterval(this.intervalId);    
   }
 
   onSearch(value: string){
@@ -65,6 +74,7 @@ export class AppointmentListComponent implements OnInit {
   
   refreshAppointments(): void {
     let params:{ 
+      customer_id?: string,
       status?: boolean, 
       paymentStatus?: boolean, 
       keyword?: string,
@@ -73,7 +83,7 @@ export class AppointmentListComponent implements OnInit {
     } = { }
     
     if(!this.accordionIsVisible){
-      params = {}
+      params = { }
     }
     else{
       if(this.checkPayment) params.paymentStatus = this.paymentStatus 
@@ -82,7 +92,8 @@ export class AppointmentListComponent implements OnInit {
     }
     params.page = this.currentPage
     params.pageSize = this.pageSize
-
+    
+    params.customer_id = this.tokenService.user?._id 
 
     this.appointmentService.getBySearchParams(params);
   }

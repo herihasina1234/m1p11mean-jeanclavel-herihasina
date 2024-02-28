@@ -17,8 +17,7 @@ export class AuthenticationService {
   constructor(
     private http: HttpClient, 
     private localStorage: LocalStorageService,
-    private route: Router,
-    private tokenService: JWTTokenService
+    private route: Router
   ) {}
 
   query_login(user: User): Observable<any> {

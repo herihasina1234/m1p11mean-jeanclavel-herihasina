@@ -4,7 +4,7 @@
       <c-col md="12">
           <c-card-group class="grid-container" *ngIf="services$ | async as services">
               <c-card class="m-1 w-10 grid-item" *ngFor="let service of services">
-                  <img cCardImg="top" src="./assets/img/services/manicure.jpg">
+                  <img cCardImg="top" src="./assets/img/services/{{ service.img }}.jpg">
                   <c-card-body>
                     <h3 cCardTitle>{{ service.designation }}</h3>
                     <p cCardText>

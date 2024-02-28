@@ -15,6 +15,10 @@ import { AppComponent } from './app.component';
 // Import containers
 import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './containers';
 
+// Import client containers
+import { ClientFooterComponent, ClientHeaderComponent, ClientLayoutComponent } from './containers';
+
+
 import {
   AvatarModule,
   BadgeModule,
@@ -45,8 +49,18 @@ const APP_CONTAINERS = [
   DefaultLayoutComponent
 ];
 
+const CLIENT_CONTAINERS = [
+  ClientFooterComponent,
+  ClientHeaderComponent,
+  ClientLayoutComponent
+];
+
 @NgModule({
-  declarations: [AppComponent, ...APP_CONTAINERS],
+  declarations: [
+    AppComponent, 
+    ...APP_CONTAINERS,
+    ...CLIENT_CONTAINERS
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

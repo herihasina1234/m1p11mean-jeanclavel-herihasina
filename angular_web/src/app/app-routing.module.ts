@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DefaultLayoutComponent } from './containers';
+import { DefaultLayoutComponent, ClientLayoutComponent } from './containers';
 import { Page404Component } from './views/pages/page404/page404.component';
 import { Page500Component } from './views/pages/page500/page500.component';
 import { LoginComponent } from './views/pages/login/login.component';
 import { RegisterComponent } from './views/pages/register/register.component';
-import { authorizationGuard } from './guard/authorization.guard';
-import { ServicesListComponent } from './views/client/services-list/services-list.component';
 
 const routes: Routes = [  
   {
@@ -71,7 +69,16 @@ const routes: Routes = [
         path: 'pages',
         loadChildren: () =>
           import('./views/pages/pages.module').then((m) => m.PagesModule)
-      },
+      }
+    ]
+  },
+  {
+    path: '',
+    component: ClientLayoutComponent,
+    data: {
+      title: 'Clients'
+    },
+    children: [
       {        
         path: 'clients',
         loadChildren: () =>

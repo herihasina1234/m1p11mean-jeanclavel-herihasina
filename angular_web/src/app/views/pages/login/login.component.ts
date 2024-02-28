@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit{
     private tokenService: JWTTokenService
   
   ) {
-    this.user.email = "saviorjames@gmail.com"
+    this.user.email = "rasamimananaherihasina@gmail.com"
     this.user.password = "herihasina"
   }
 

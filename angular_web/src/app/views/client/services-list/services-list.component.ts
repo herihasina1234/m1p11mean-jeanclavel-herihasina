@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/Service';
 import { ServiceService } from 'src/app/services/api/service_service/service.service';
+import { DateService } from 'src/app/services/date/date.service';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
 
 @Component({
@@ -10,11 +10,14 @@ import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service
   templateUrl: './services-list.component.html',
   styleUrl: './services-list.component.scss'
 })
-export class ServicesListComponent implements OnInit {
+export class ServicesListComponent implements OnInit, OnDestroy {
+  //autoRefresh variable
+  private intervalId?: number;
+  
   services$: Observable<Service[]> = this.serviceService.dataList$;  
   totalPages$: Observable<number> = this.serviceService.totalPages$;
   paginationTable$: Observable<number[]> = this.serviceService.paginationTable$;
-
+  
   //pagination variable
 
   currentPage: number = 1;
@@ -26,13 +29,20 @@ export class ServicesListComponent implements OnInit {
     private serviceService: ServiceService,
     private prendreRvService: PrendreRvService
   ){
+    this.intervalId = window.setInterval(() => {
+      this.refreshServices();
+    }, 100000);
+  } 
 
-  }
-  
   ngOnInit(): void {
     this.refreshServices();
+  }  
+  
+  ngOnDestroy(): void {
+    if(this.intervalId)
+      clearInterval(this.intervalId);    
   }
-
+  
   onPageChange(event: any): void {
     this.currentPage = event;
     this.refreshServices();
@@ -51,7 +61,6 @@ export class ServicesListComponent implements OnInit {
   }
   
   addServiceToCart(service: Service){ 
-    console.log("srvice", service)   
     this.prendreRvService.addToCart(service);
   };
 }

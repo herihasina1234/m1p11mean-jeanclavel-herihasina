@@ -1,4 +1,5 @@
 const Appointments = require("../models/Appointments");
+const mongoose = require('mongoose');
 
 module.exports.registre_appointment = async(req, res) => {
     const { customer, employee, service, startDate, endDate, createdAt = new Date(), status = false } = req.body;
@@ -23,25 +24,38 @@ module.exports.save_many = async(req, res) => {
     const status = false;
     const paymentStatus = false;
     let listCreated = [];
-    let listAborted = [];
-    const message = "request to add appointments completed"                 
+    const message = "request to add appointments completed"   
     
-    appointments.forEach(async appointment => {         
-        const customer = appointment.customer._id
-        const employee = appointment.employee._id
-        const service = appointment.service._id 
-        const startDate = appointment.startDate
-        const endDate = appointment.endDate   
-        
-        await Appointments.create({ customer, employee, service, startDate, endDate, createdAt, status, paymentStatus })
-            .then ( app => {                   
-                listCreated.push(app);
-            })
-            .catch( error => {
-                listAborted.push(appointment);
-            })           
-    });
-    res.status(201).json({ message: message, data: { created: listCreated, aborted: listAborted } });
+    const session = await mongoose.startSession();
+
+    try {
+      session.startTransaction();
+
+      appointments.forEach(async appointment => {         
+          const customer = appointment.customer._id
+          const employee = appointment.employee._id
+          const service = appointment.service._id 
+          const startDate = appointment.startDate
+          const endDate = appointment.endDate   
+          
+          await Appointments.create({ customer, employee, service, startDate, endDate, createdAt, status, paymentStatus })
+              .then ( app => {                   
+                  listCreated.push(app);
+              })                        
+      });
+    
+      await session.commitTransaction();
+    } catch (error) {
+        console.log(error);
+      await session.abortTransaction();
+
+      res.status(400).json({ error: err.message });
+    } finally {
+      session.endSession();
+    }
+    
+    
+    res.status(201).json({ message: message, data: listCreated });
 }
 
 
@@ -69,9 +83,12 @@ module.exports.findByParams = async(req, res) => {
     const pageSize = parseInt(req.query.pageSize) || 10;
     const startIndex = (page - 1) * pageSize; //0
 
+    const customer_id = req.query.customer_id
+
     let filter = Object.assign({}, req.query);
     delete filter.page;
     delete filter.pageSize;
+    delete filter.customer_id;
 
     await Appointments.find(filter)
     .populate('customer')
@@ -80,20 +97,29 @@ module.exports.findByParams = async(req, res) => {
     .sort({ startDate: 'desc' })            
     .then ( appointments => {    
         let result = []  
-        
-        if(!req.query.keyword)  result = appointments
-        else {
-            // Filtrer
-            const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
+        //filtre pour customer_id
+        if(customer_id){
             appointments.forEach(appointment => {
-                if(
-                    regex.test(appointment.service.designation) ||
-                    regex.test(appointment.employee.name) ||
-                    regex.test(appointment.employee.firstname) 
-                    ) 
+                if( appointment.customer._id.toString() === customer_id ) {
+                    
                     result.push(appointment)                
-                });
-            }
+                }
+            });
+        }
+        
+        
+        // Filtrer mot-cle
+        if(req.query.keyword) {
+        const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
+        appointments.forEach(appointment => {
+            if(
+                regex.test(appointment.service.designation) ||
+                regex.test(appointment.employee.name) ||
+                regex.test(appointment.employee.firstname) 
+                ) 
+                result.push(appointment)                
+            });
+        }
             
         const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
         const paginatedResult = result.slice(startIndex, endIndex + 1);
@@ -110,6 +136,65 @@ module.exports.findByParams = async(req, res) => {
         })  
 
 }
+
+// module.exports.findByParams = async(req, res) => {    
+
+//     const page = parseInt(req.query.page) || 1;
+//     const pageSize = parseInt(req.query.pageSize) || 10;
+//     const startIndex = (page - 1) * pageSize; //0
+
+//     const customer_id = req.query.customer_id
+
+//     let filter = Object.assign({}, req.query);
+//     delete filter.page;
+//     delete filter.pageSize;
+
+//     await Appointments.find(filter)
+//     .populate('customer')
+//     .populate('employee')
+//     .populate('service')   
+//     .sort({ startDate: 'desc' })            
+//     .then ( appointments => {    
+//         let result = []  
+
+//         //filtre pour customer_id
+//         if(customer_id){
+//             appointments.forEach(appointment => {
+//                 if( appointment.customer._id === customer_id ) 
+//                     result.push(appointment)                
+//             });
+//         }
+        
+        
+//         if(!req.query.keyword)  result = appointments
+//         else {
+//             // Filtrer
+//             const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
+//             appointments.forEach(appointment => {
+//                 if(
+//                     regex.test(appointment.service.designation) ||
+//                     regex.test(appointment.employee.name) ||
+//                     regex.test(appointment.employee.firstname) 
+//                     ) 
+//                     result.push(appointment)                
+//                 });
+//             }
+            
+//         const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+//         const paginatedResult = result.slice(startIndex, endIndex + 1);
+//         const totalPages = Math.ceil(result.length / pageSize);
+//         const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
+        
+//         message= `appointments list with params ${queryParams} obtained successfully`;
+    
+                    
+//         res.status(201).json({ message: message, data: paginatedResult, totalPages: totalPages });
+//         })
+//         .catch( error => {
+//             res.status(400).json({message: error.message, data: error})
+//         })  
+
+// }
 
 module.exports.count_appointment_per_day = async(req, res) => {
 

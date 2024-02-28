@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
-import { DateService } from 'src/app/services/date/date.service';
 import { User } from 'src/app/models/User';
 import { UserService } from 'src/app/services/api/user_service/user.service';
 import { Appointment } from 'src/app/models/Appointment';
-import { JWTTokenService } from 'src/app/services/token_service/jwt-token.service';
 import { IconSetService } from '@coreui/icons-angular';
-import { cilTrash } from '@coreui/icons';
+import { cilTrash, cilCheckAlt } from '@coreui/icons';
 
 @Component({
   selector: 'app-prendre-rv',
@@ -17,6 +15,8 @@ import { cilTrash } from '@coreui/icons';
 })
 export class PrendreRvComponent implements OnInit{
   cartAppointments$: Observable<Appointment[]> = this.prendreRvService.cartAppointments$;
+  durationTotal$: Observable<number> = this.prendreRvService.durationTotal$;
+  priceTotal$: Observable<number> = this.prendreRvService.priceTotal$;
   prixTotal: number = 0;
   dureeTotal: number = 0;
   dateDebut: Date = new Date();
@@ -28,6 +28,8 @@ export class PrendreRvComponent implements OnInit{
   
   //ui variable
   loading = false;
+  alertSuccess = false;
+  alertError = false;
 
   // Define FormGroup to manage the form
   dateTimeForm: FormGroup | undefined | null;    
@@ -35,33 +37,25 @@ export class PrendreRvComponent implements OnInit{
   constructor(
     private prendreRvService: PrendreRvService,
     private userService: UserService,
-    private dateService: DateService,
-    private formBuilder: FormBuilder,
     public iconSet: IconSetService
     ) {
-      iconSet.icons = { cilTrash };
+      iconSet.icons = { cilTrash, cilCheckAlt };
     }
     
-  ngOnInit(): void {
-    this.dateTimeForm = this.formBuilder.group({
-      requestdate: ['']
-    })    
-    this.dateTimeForm.get('requestdate')?.patchValue(this.dateService.formatDate(this.dateDebut));
-      
-    this.initEmployes();
-    this.calculate();  
+  ngOnInit(): void {     
+    this.initEmployes();    
   }
 
-  private calculate(): void {
-    // this.calculPrixTotal()    
-    // this.calculDureeTotal()
-    // this.calculDate()    
+  calculate(): void {        
+    this.prendreRvService.makeDateLinked();
+    this.prendreRvService.calculDuration();
+    this.prendreRvService.calculPrice();
   }
 
   //                                                                                                                          
   //initialisation listes des employes
   initEmployes(){
-   this.userService.get("fonction=employe")
+   this.userService.findByRole("employee")
     .subscribe({
       next: (response: any) =>  {
         this.employes = response.response.data;
@@ -71,33 +65,27 @@ export class PrendreRvComponent implements OnInit{
       complete: () => console.info("initEmployes completed succesfully")
     })  
   }
-
-  onSubmit(): void {
-    this.calculate();
-  }
-
   
-  onSelect(employee_index: number, appointment_index: number){    
-    this.prendreRvService.updateEmploye(this.employes[employee_index], appointment_index)
+  onSelect(employee_index: number, appointment_index: number){        
+    this.prendreRvService.updateEmploye(this.employes[employee_index - 1], appointment_index)
   }
 
 
   validateRv(): void {     
     this.loading = true;  
-    this.loading = !this.prendreRvService.save();
+    let boolstate = this.prendreRvService.save();
+    if(boolstate === true){      
+      this.alertSuccess = true;
+    } 
+    if(boolstate === false){      
+      this.alertError = true;
+    }     
+    this.loading = false;
   }
   
-
-  formatDateTime(appointment: Appointment){    
-    let ed = this.dateService.strToDate(appointment.startDate)
-    if(appointment.service?.duree)
-      ed.setMinutes(appointment.service.duree + ed.getMinutes())
-    
-    //formatage pour l'insertion dans monogodb
-    appointment.startDate = appointment.startDate + ':00Z'
-    appointment.endDate = this.dateService.formatToDb(ed)
-    
-    this.endDateStr = this.dateService.formatToDisplay(ed)    
+  
+  updateDate(dateTime: string, appointment_index: number){    
+    this.prendreRvService.updateDate(dateTime, appointment_index)               
   }
   
   removeProductFromCart = (id: number): void => {

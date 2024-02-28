@@ -23,7 +23,18 @@ module.exports.login = async (req, res) => {
 
                 //JWT
                 const token = jwt.sign(
-                    {userId: user.id}, //identifiant unique de l'utilisateur
+                    //information utilisateur
+                    {
+                        userId: user.id, 
+                        email: user.email,
+                        name: user.name,
+                        firstname: user.firstname,
+                        role:{ 
+                            designation: user.role.desigantion,
+                            code: user.role.code
+                        },
+                        avatar: user.avatar
+                    }, 
                     global_constants.private_key,        //clef secrete 
                     {expiresIn: '24h'}  //duree de validite
                 )
@@ -75,16 +86,17 @@ module.exports.find = async (req, res) => {
             
 }
 
-module.exports.findByRole = async (req, res) => {    
-    const fonction = req.params.role;
-    var condition = {role: role};
+module.exports.findByRole = async (req, res) => {        
+    const role_designation = req.params.role;
 
-    await User.find(condition)
+    await User.find()
         .populate('role')
-        .then ( users => {    
+        .then ( users => {   
+            let result = users.filter( user => user.role.designation === role_designation) 
+            
             const response = {
-                message: `list of all ${role} user obtained successfully`,
-                data: users                 
+                message: `list of all ${role_designation} user obtained successfully`,
+                data: result                 
             }
             res.status(201).json({ response: response });
         })
