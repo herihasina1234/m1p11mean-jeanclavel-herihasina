@@ -42,5 +42,9 @@ export class AuthenticationService {
     });        
   }
 
+  logout() {
+    this.localStorage.remove('token');
+    this.route.navigate(['/login']);
+  }
 
 }

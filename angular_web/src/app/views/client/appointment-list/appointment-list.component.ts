@@ -22,7 +22,7 @@ export class AppointmentListComponent implements OnInit {
   //ui variable
   loading: boolean = false;
   @ViewChild('staticBackdropModal') staticBackdropModal: any; // ViewChild to access the modal
-  
+  userInfo: any;
   //ui searchbar variable
 
   accordionIsVisible: boolean = false;
@@ -54,6 +54,7 @@ export class AppointmentListComponent implements OnInit {
     this.intervalId = window.setInterval(() => {
       this.refreshAppointments();
     }, 100000);
+    this.userInfo = this.tokenService.getDecodeToken();
   }
 
   ngOnDestroy(): void {
@@ -93,7 +94,7 @@ export class AppointmentListComponent implements OnInit {
     params.page = this.currentPage
     params.pageSize = this.pageSize
     
-    params.customer_id = this.tokenService.user?._id 
+    params.customer_id = this.userInfo.userId;
 
     this.appointmentService.getBySearchParams(params);
   }
