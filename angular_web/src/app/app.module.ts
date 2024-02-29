@@ -45,6 +45,9 @@ import {
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 import { HttpClientModule } from '@angular/common/http';
 
+import { AuthenticationInterceptorService } from 'src/app/services/authentication_interceptor/authentication-interceptor.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
 const APP_CONTAINERS = [
   DefaultFooterComponent,
   DefaultHeaderComponent,
@@ -106,6 +109,10 @@ const EMPLOYEE_CONTAINERS = [
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy
+    },    
+    { 
+      provide: HTTP_INTERCEPTORS, 
+      useClass: AuthenticationInterceptorService, multi: true 
     },
     IconSetService,
     Title

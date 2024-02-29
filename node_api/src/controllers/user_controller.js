@@ -5,7 +5,7 @@ const global_constants = require('../middleware/global_constants')
 
 module.exports.login = async (req, res) => {
     const { email, password } = req.body
-    console.log({ email, password })
+    
     await User.findOne({ email })
         .then ( user => {
             if(user === null){
