@@ -105,6 +105,8 @@ module.exports.findByRole = async (req, res) => {
         })            
             
 }
+
+
 module.exports.findById = async (req, res) => {        
     await User.findById(req.params.id)
         .populate('role')   
@@ -120,4 +122,17 @@ module.exports.findById = async (req, res) => {
         })            
             
 }
+
+
+module.exports.sendMail = async(req, res) => {
+    // try {
+    await sendMail('ainafitiavana0120@gmail.com', 'Bienvenue!', 'Votre compte a été créé avec succès.');
+    const response = {
+        message: "envoie mail success",
+    };
+    res.status(201).json(response);
+    // } catch (error) {
+    //     res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail.', error });
+    // }
+};
 

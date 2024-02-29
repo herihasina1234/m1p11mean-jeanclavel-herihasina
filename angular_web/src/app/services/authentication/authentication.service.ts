@@ -33,12 +33,12 @@ export class AuthenticationService {
     .subscribe({
       next: ( data ) => {
         this.localStorage.set('token', data.token);
-        console.log(user)
-        // if(user.role?.designation === 'client')
-        //   this.route.navigate(['/clients/services']);
+        
+        if(user.role?.designation === 'client')
+          this.route.navigate(['/clients/services']);
 
-        // if(user.role?.designation === 'employee')
-        //   this.route.navigate(['/employees/appointments']);
+        if(user.role?.designation === 'employee')
+          this.route.navigate(['/employees/appointments']);
       },
       error: (e: any) => {
         console.error(e)

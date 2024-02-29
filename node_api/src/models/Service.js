@@ -9,11 +9,11 @@ const serviceSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please enter a description'],
     },
-    duree: {
+    duration: {
         type: Number,
         required: [true, 'Please enter a duration'],
     },
-    prix: {
+    price: {
         type: Number,
         required: [true, 'Please enter a price']
     },
