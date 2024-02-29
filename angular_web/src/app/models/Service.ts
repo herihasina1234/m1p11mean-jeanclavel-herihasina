@@ -2,8 +2,8 @@ export class Service {
     _id: string;
     designation: string;
     description: string;
-    duree: number;
-    prix: number;
+    duration: number;
+    price: number;
     commission: number;
     img: string | undefined;
   
@@ -11,8 +11,8 @@ export class Service {
       this._id = '';
       this.designation = '';
       this.description = '';
-      this.duree = 0;
-      this.prix = 0;
+      this.duration = 0;
+      this.price = 0;
       this.commission = 0;
       }
   }
