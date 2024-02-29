@@ -41,6 +41,10 @@ export class ServiceService {
   getAll(): Observable<Service[]> {
     return this.http.get<Service[]>(this.baseUrl);
   }
+  
+  getById(id: any): Observable<any> {
+    return this.http.get<Service>(`${this.baseUrl}/${id}`);
+  }
 
   get(id: any): Observable<any> {
     return this.http.get(`${this.baseUrl}/${id}`);

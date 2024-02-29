@@ -47,6 +47,9 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AuthenticationInterceptorService } from 'src/app/services/authentication_interceptor/authentication-interceptor.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { GeneralSettingModule } from './views/general-setting/general-setting.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DataTablesModule } from 'angular-datatables';
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -74,7 +77,10 @@ const EMPLOYEE_CONTAINERS = [
     EMPLOYEE_CONTAINERS
   ],
   imports: [
+    GeneralSettingModule,    
     BrowserModule,
+    MatDialogModule,
+    DataTablesModule,    
     BrowserAnimationsModule,
     AppRoutingModule,
     AvatarModule,

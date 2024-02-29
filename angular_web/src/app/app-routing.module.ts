@@ -73,6 +73,36 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'setting',
+    component: DefaultLayoutComponent,
+    data: {
+      title: 'Parametrages'
+    },
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./views/general-setting/general-setting.module').then((m) => m.GeneralSettingModule)
+      }
+    ]
+  },
+  
+  {
+    path: 'statistic',
+    component: DefaultLayoutComponent,
+    data: {
+      title: 'Statistiques'
+    },
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./views/statistic/statistic.module').then((m) => m.StatisticModule)
+      }
+    ]
+  },
+  
+  {
     path: '',
     component: ClientLayoutComponent,
     data: {
