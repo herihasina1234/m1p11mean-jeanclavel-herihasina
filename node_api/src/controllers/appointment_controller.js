@@ -205,6 +205,50 @@ module.exports.findByParamsEmployee = async(req, res) => {
 
 }
 
+
+module.exports.findCommission = async(req, res) => {        
+    const employee_id = req.query.employee_id;
+    const dateCommission = req.query.dateCommission;
+    
+    // let debut = new Date(`${dateCommission}:00z`);
+    // let fin = new Date(`${dateCommission}:00z`);
+    // debut.setHours(0, 0, 0, 0);
+    // fin.setHours(59, 59, 59, 59);
+    // console.log(debut, fin)
+
+    const filter = { startDate: { $gte: "2024-02-01T00:00", $lte: "2024-02-01T23:59" }};
+    
+    await Appointments.find(filter)
+    .populate('customer')
+    .populate('employee')
+    .populate('service')   
+    .sort({ startDate: 'desc' })            
+    .then ( appointments => {    
+        let result = []         
+        
+        //filtre pour employee_id        
+        appointments.forEach(appointment => {
+            if( appointment.employee._id.toString() === employee_id ) {
+                
+                result.push(appointment)                
+            }
+        });                        
+        
+        const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
+        
+        message= `commission list of employee with params ${queryParams} obtained successfully`;
+    
+                    
+        res.status(201).json({ message: message, data: result });
+        })
+        .catch( error => {
+            res.status(400).json({message: error.message, data: error})
+        })  
+    }
+
+
+
+
 module.exports.count_appointment_per_day = async(req, res) => {
 
     try {

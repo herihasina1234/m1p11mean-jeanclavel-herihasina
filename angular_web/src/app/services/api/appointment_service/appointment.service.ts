@@ -79,4 +79,18 @@ export class AppointmentService {
 
     })
   }
+
+  getCommission(params: any): void {
+    const queryParams = Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&');
+
+    this.http.get<Appointment[]>(`${this.baseUrl}/commission?${queryParams}`).subscribe({
+      next: (response: any) =>  {
+        this.dataListSubject.next(response.data);
+        console.info(response.message);
+      }, 
+      error: (e: any) => console.error(e),
+      complete: () => console.info("getCommission completed succesfully")
+
+    })
+  }
 }
