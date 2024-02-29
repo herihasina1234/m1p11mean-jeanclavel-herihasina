@@ -8,6 +8,7 @@ import { PaginationComponent } from 'src/app/views/client/pagination/pagination.
 import { AppointmentListComponent } from 'src/app/views/client/appointment-list/appointment-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconModule, IconSetService } from '@coreui/icons-angular';
+import { CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,10 @@ import { IconModule, IconSetService } from '@coreui/icons-angular';
     PaginationModule,
     SpinnerModule,
     IconModule,
-    AlertModule
+    AlertModule,
+    CdkDrag,
+    CdkDropList,
+    CdkDropListGroup
   ],
   providers:[
     IconSetService

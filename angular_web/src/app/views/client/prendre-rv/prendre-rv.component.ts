@@ -7,6 +7,7 @@ import { UserService } from 'src/app/services/api/user_service/user.service';
 import { Appointment } from 'src/app/models/Appointment';
 import { IconSetService } from '@coreui/icons-angular';
 import { cilTrash, cilCheckAlt } from '@coreui/icons';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-prendre-rv',
@@ -91,6 +92,15 @@ export class PrendreRvComponent implements OnInit{
   removeProductFromCart = (id: number): void => {
     this.prendreRvService.removeFromCart(id);
   };
+
+  drop(event: CdkDragDrop<Appointment[]>){
+    console.log('drop', event);
+    moveItemInArray(
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    )
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next();

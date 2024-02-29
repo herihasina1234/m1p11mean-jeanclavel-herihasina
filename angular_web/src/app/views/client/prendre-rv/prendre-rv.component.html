@@ -22,7 +22,7 @@
     <ng-container *ngIf="cartAppointments$ | async as appointments">
       <ng-container *ngIf="appointments.length > 0; else emptyList">
         <div class="table-responsive">
-          <table class="table table-striped mlr-10">
+          <table cdkDropListGroup class="table table-striped mlr-10">
             <thead class="thead -primary">
               <tr>
                 <th th scope="col">designation</th>
@@ -36,8 +36,12 @@
                 <th th scope="col"></th>
               </tr>
             </thead>
-            <tbody>
-              <tr *ngFor="let appointment of appointments; let i = index">
+            <tbody 
+            cdkDropList 
+            [cdkDropListData]="appointments"
+            (cdkDropListDropped)="drop($event)"
+            >
+              <tr *ngFor="let appointment of appointments; let i = index" cdkDrag>
                 <td>{{ appointment.service?.designation }}</td>
                 <td>{{ appointment.service?.duree }}</td>
                 <td>{{ appointment.service?.prix }}</td>
