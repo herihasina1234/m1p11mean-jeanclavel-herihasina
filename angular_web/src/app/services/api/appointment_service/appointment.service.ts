@@ -53,7 +53,6 @@ export class AppointmentService {
 
     this.http.get<Appointment[]>(`${this.baseUrl}/search?${queryParams}`).subscribe({
       next: (response: any) =>  {
-        console.log(response.data)
         this.dataListSubject.next(response.data);
         this.totalPagesSubject.next(response.totalPages)
         this.paginationTableSubject.next(Array.from({length: response.totalPages}, (_, i) => i + 1));
@@ -61,6 +60,22 @@ export class AppointmentService {
       }, 
       error: (e: any) => console.error(e),
       complete: () => console.info("getBySearchParams completed succesfully")
+
+    })
+  }
+
+  getBySearchParamsEmployee(params: any): void {
+    const queryParams = Object.keys(params).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])).join('&');
+
+    this.http.get<Appointment[]>(`${this.baseUrl}/employee_search?${queryParams}`).subscribe({
+      next: (response: any) =>  {
+        this.dataListSubject.next(response.data);
+        this.totalPagesSubject.next(response.totalPages)
+        this.paginationTableSubject.next(Array.from({length: response.totalPages}, (_, i) => i + 1));
+        console.info(response.message);
+      }, 
+      error: (e: any) => console.error(e),
+      complete: () => console.info("getBySearchParamsEmployee completed succesfully")
 
     })
   }

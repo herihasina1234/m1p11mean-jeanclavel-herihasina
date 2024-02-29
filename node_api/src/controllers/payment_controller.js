@@ -17,6 +17,7 @@ module.exports.save = async(req, res) => {
                 pay = payment
             })  
             
+            //inn le new io moa?
             await Appointment.findByIdAndUpdate(appointment, { paymentStatus: true }, { new: true })
             .then(appointment => {
                 if (!appointment) {                    

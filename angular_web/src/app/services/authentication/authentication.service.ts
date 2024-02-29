@@ -26,14 +26,19 @@ export class AuthenticationService {
     return this.http.post(this.baseURL, body, { headers: new HttpHeaders() })
   }
   
+
+  //not in use 
   login(user: User) {    
     this.query_login(user)
     .subscribe({
       next: ( data ) => {
         this.localStorage.set('token', data.token);
-        
-        if(user.role?.designation === 'client')
-          this.route.navigate(['/clients/services']);
+        console.log(user)
+        // if(user.role?.designation === 'client')
+        //   this.route.navigate(['/clients/services']);
+
+        // if(user.role?.designation === 'employee')
+        //   this.route.navigate(['/employees/appointments']);
       },
       error: (e: any) => {
         console.error(e)

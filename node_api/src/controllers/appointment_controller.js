@@ -89,6 +89,7 @@ module.exports.findByParams = async(req, res) => {
     delete filter.page;
     delete filter.pageSize;
     delete filter.customer_id;
+    delete filter.keyword;
 
     await Appointments.find(filter)
     .populate('customer')
@@ -97,12 +98,13 @@ module.exports.findByParams = async(req, res) => {
     .sort({ startDate: 'desc' })            
     .then ( appointments => {    
         let result = []  
+        let id_filter_res = []
         //filtre pour customer_id
         if(customer_id){
             appointments.forEach(appointment => {
                 if( appointment.customer._id.toString() === customer_id ) {
                     
-                    result.push(appointment)                
+                    id_filter_res.push(appointment)                
                 }
             });
         }
@@ -111,7 +113,7 @@ module.exports.findByParams = async(req, res) => {
         // Filtrer mot-cle
         if(req.query.keyword) {
         const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
-        appointments.forEach(appointment => {
+        id_filter_res.forEach(appointment => {
             if(
                 regex.test(appointment.service.designation) ||
                 regex.test(appointment.employee.name) ||
@@ -119,6 +121,9 @@ module.exports.findByParams = async(req, res) => {
                 ) 
                 result.push(appointment)                
             });
+        }
+        else{
+            result = id_filter_res;
         }
             
         const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
@@ -137,64 +142,68 @@ module.exports.findByParams = async(req, res) => {
 
 }
 
-// module.exports.findByParams = async(req, res) => {    
 
-//     const page = parseInt(req.query.page) || 1;
-//     const pageSize = parseInt(req.query.pageSize) || 10;
-//     const startIndex = (page - 1) * pageSize; //0
+module.exports.findByParamsEmployee = async(req, res) => {    
 
-//     const customer_id = req.query.customer_id
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const startIndex = (page - 1) * pageSize; //0
 
-//     let filter = Object.assign({}, req.query);
-//     delete filter.page;
-//     delete filter.pageSize;
+    const employee_id = req.query.employee_id;
 
-//     await Appointments.find(filter)
-//     .populate('customer')
-//     .populate('employee')
-//     .populate('service')   
-//     .sort({ startDate: 'desc' })            
-//     .then ( appointments => {    
-//         let result = []  
+    let filter = Object.assign({}, req.query);
+    delete filter.page;
+    delete filter.pageSize;
+    delete filter.employee_id;
+    delete filter.keyword;
 
-//         //filtre pour customer_id
-//         if(customer_id){
-//             appointments.forEach(appointment => {
-//                 if( appointment.customer._id === customer_id ) 
-//                     result.push(appointment)                
-//             });
-//         }
+    await Appointments.find(filter)
+    .populate('customer')
+    .populate('employee')
+    .populate('service')   
+    .sort({ startDate: 'desc' })            
+    .then ( appointments => {    
+        let result = [] 
+        let after_id = []
         
+        //filtre pour employee_id        
+        appointments.forEach(appointment => {
+            if( appointment.employee._id.toString() === employee_id ) {
+                
+                after_id.push(appointment)                
+            }
+        });
+                
+        // Filtrer mot-cle
+        if(req.query.keyword) {
+            const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse            
+            after_id.forEach(appointment => {                
+            if(
+                regex.test(appointment.service.designation) ||
+                regex.test(appointment.customer.name) ||
+                regex.test(appointment.customer.firstname) 
+                ) 
+                result.push(appointment)                
+            });
+        }else{
+            result = after_id;
+        }
         
-//         if(!req.query.keyword)  result = appointments
-//         else {
-//             // Filtrer
-//             const regex = new RegExp(req.query.keyword, 'i'); // i: insensible à la casse
-//             appointments.forEach(appointment => {
-//                 if(
-//                     regex.test(appointment.service.designation) ||
-//                     regex.test(appointment.employee.name) ||
-//                     regex.test(appointment.employee.firstname) 
-//                     ) 
-//                     result.push(appointment)                
-//                 });
-//             }
-            
-//         const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
-//         const paginatedResult = result.slice(startIndex, endIndex + 1);
-//         const totalPages = Math.ceil(result.length / pageSize);
-//         const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
+        const endIndex = Math.min(startIndex + pageSize - 1, result.length - 1);
+        const paginatedResult = result.slice(startIndex, endIndex + 1);
+        const totalPages = Math.ceil(result.length / pageSize);
+        const queryParams = Object.keys(req.query).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(req.query[key])).join(', ');
         
-//         message= `appointments list with params ${queryParams} obtained successfully`;
+        message= `appointments list of employee with params ${queryParams} obtained successfully`;
     
                     
-//         res.status(201).json({ message: message, data: paginatedResult, totalPages: totalPages });
-//         })
-//         .catch( error => {
-//             res.status(400).json({message: error.message, data: error})
-//         })  
+        res.status(201).json({ message: message, data: paginatedResult, totalPages: totalPages });
+        })
+        .catch( error => {
+            res.status(400).json({message: error.message, data: error})
+        })  
 
-// }
+}
 
 module.exports.count_appointment_per_day = async(req, res) => {
 
@@ -287,6 +296,21 @@ async function calculateAverageTimeByEmployee() {
     } catch (error) {
         throw new Error('Error calculating average time by employee: ' + error.message);
     }
+}
+
+
+module.exports.update = async(req, res) => {
+    const { id } = req.params;
+
+    await Appointments.findByIdAndUpdate(id, req.body)
+        .then(appointment => {
+            if (!appointment) {                    
+                throw new Error(`no such appointment with id=${id}.`);                                    
+            }
+            appt = appointment;
+            const message = "appointment updated successfully"                 
+            res.status(201).json({ message: message, data: appt });
+        })    
 }
 
 

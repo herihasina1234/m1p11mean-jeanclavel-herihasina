@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DefaultLayoutComponent, ClientLayoutComponent } from './containers';
+import { DefaultLayoutComponent, ClientLayoutComponent, EmployeeLayoutComponent } from './containers';
 import { Page404Component } from './views/pages/page404/page404.component';
 import { Page500Component } from './views/pages/page500/page500.component';
 import { LoginComponent } from './views/pages/login/login.component';
@@ -83,6 +83,20 @@ const routes: Routes = [
         path: 'clients',
         loadChildren: () =>
         import('./views/client/client.module').then((m) => m.ClientModule)
+      }
+    ]
+  },
+  {
+    path: '',
+    component: EmployeeLayoutComponent,
+    data: {
+      title: 'Employees'
+    },
+    children: [
+      {        
+        path: 'employees',
+        loadChildren: () =>
+        import('./views/employee/employee.module').then((m) => m.EmployeeModule)
       }
     ]
   },

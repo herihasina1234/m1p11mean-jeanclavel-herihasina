@@ -18,6 +18,8 @@ import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent 
 // Import client containers
 import { ClientFooterComponent, ClientHeaderComponent, ClientLayoutComponent } from './containers';
 
+// Import employee containers
+import { EmployeeFooterComponent, EmployeeHeaderComponent, EmployeeLayoutComponent } from './containers';
 
 import {
   AvatarModule,
@@ -55,11 +57,18 @@ const CLIENT_CONTAINERS = [
   ClientLayoutComponent
 ];
 
+const EMPLOYEE_CONTAINERS = [
+  EmployeeFooterComponent,
+  EmployeeHeaderComponent,
+  EmployeeLayoutComponent
+];
+
 @NgModule({
   declarations: [
     AppComponent, 
     ...APP_CONTAINERS,
-    ...CLIENT_CONTAINERS
+    ...CLIENT_CONTAINERS,
+    EMPLOYEE_CONTAINERS
   ],
   imports: [
     BrowserModule,

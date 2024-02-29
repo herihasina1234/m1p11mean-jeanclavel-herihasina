@@ -50,6 +50,9 @@ export class LoginComponent implements OnInit{
           
           if(this.tokenService.user?.role?.designation === 'client')
             this.route.navigate(['/clients/services']);
+
+          if(this.tokenService.user?.role?.designation === 'employee')
+            this.route.navigate(['/employees/appointments']);
         },
         error: (e: any) => {
           console.error(e);

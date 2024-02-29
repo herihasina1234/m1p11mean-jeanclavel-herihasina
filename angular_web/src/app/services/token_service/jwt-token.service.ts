@@ -26,7 +26,6 @@ export class JWTTokenService {
   async decodeToken() {
     if (this.jwtToken) {
       this.decodedToken = jwtDecode(this.jwtToken);
-      console.log(this.decodedToken)
       await this.userService.get(this.decodedToken['userId'])
       .subscribe({
         next: (response: any) =>  {

@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/Service';
 import { ServiceService } from 'src/app/services/api/service_service/service.service';
-import { DateService } from 'src/app/services/date/date.service';
 import { PrendreRvService } from 'src/app/services/prendre-rv/prendre-rv.service';
 
 @Component({
